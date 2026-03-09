@@ -1,0 +1,62 @@
+<!doctype html>
+<html class="light" lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="style/global.css" rel="stylesheet" />
+    <link href="style/vote.css" rel="stylesheet" />
+    <title>突発単語ゲーム - 文書作成</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="game-area">
+        <!-- Target Goal -->
+        <section class="card">
+          <div class="section-header">
+            <span class="material-symbols-outlined">thumb_up</span>
+            <h2 class="section-title">投票</h2>
+          </div>
+          <p class="card-large-text">一番食べたくない食べ物</p>
+        </section>
+
+        <!-- Sentences -->
+        <fieldset class="sentence-list">
+          <legend class="list-description">
+            一番目標と近いと思うものを選んでください。
+          </legend>
+
+          <label class="card">
+            <input type="radio" name="sentence-list" value="sentence-1" />
+            <span class="card-text">ベチャベチャの激安納豆炒め</span>
+          </label>
+
+          <label class="card">
+            <input type="radio" name="sentence-list" value="sentence-2" />
+            <span class="card-text">ベチャベチャの激安納豆炒め</span>
+          </label>
+
+          <label class="card">
+            <input type="radio" name="sentence-list" value="sentence-3" />
+            <span class="card-text">ベチャベチャの激安納豆炒め</span>
+          </label>
+
+          <div class="submit-area">
+            <button class="submit-button" type="submit">投票</button>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </body>
+</html>
