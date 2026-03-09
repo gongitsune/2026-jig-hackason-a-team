@@ -1,0 +1,275 @@
+/* Reset and Base Styles */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+:root {
+	--primary: #368ce2;
+	--background-light: #f6f7f8;
+	--white: #ffffff;
+	--slate-50: #f8fafc;
+	--slate-100: #f1f5f9;
+	--slate-200: #e2e8f0;
+	--slate-300: #cbd5e1;
+	--slate-400: #94a3b8;
+	--slate-500: #64748b;
+	--slate-600: #475569;
+	--slate-700: #334155;
+	--slate-800: #1e293b;
+	--slate-900: #0f172a;
+	--green-100: #dcfce7;
+	--green-400: #4ade80;
+	--green-500: #22c55e;
+	--green-600: #16a34a;
+	--green-900: #14532d;
+}
+
+body {
+	font-family: "Lexend", sans-serif;
+	background-color: var(--background-light);
+	color: var(--slate-900);
+	min-height: 100vh;
+	margin: 0;
+}
+
+.container {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 0 1rem;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+/* Main Content Grid */
+main {
+	flex: 1;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 2rem;
+	padding: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+	main {
+		grid-template-columns: repeat(12, 1fr);
+	}
+}
+
+.game-area {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+	.game-area {
+		grid-column: span 8;
+	}
+}
+
+/* Card Styles */
+.card {
+	background-color: var(--white);
+	padding: 1.5rem;
+	border-radius: 0.75rem;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	border: 1px solid var(--slate-200);
+}
+
+.section-header {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.section-header .material-symbols-outlined {
+	color: var(--primary);
+}
+
+.section-title {
+	font-size: 0.875rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--slate-500);
+}
+
+/* Target Goal */
+.mission-text {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--slate-800);
+	line-height: 1.25;
+}
+
+.mission-text .highlight {
+	color: var(--primary);
+	text-decoration: underline;
+	text-decoration-color: rgba(54, 140, 226, 0.3);
+	text-underline-offset: 4px;
+}
+
+/* Word Bank */
+.word-bank-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 1rem;
+}
+
+.word-bank-header-left {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.word-bank-header-left .material-symbols-outlined {
+	color: var(--slate-500);
+}
+
+.word-bank-hint {
+	font-size: 0.75rem;
+	color: var(--slate-400);
+}
+
+.word-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.word-button {
+	padding: 0.5rem 1rem;
+	background-color: var(--white);
+	border: 2px solid var(--slate-200);
+	border-radius: 0.5rem;
+	cursor: pointer;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	font-weight: 500;
+	font-family: "Lexend", sans-serif;
+	font-size: 1rem;
+	color: inherit;
+	transition: all 0.2s;
+}
+
+.word-button:hover {
+	border-color: var(--primary);
+	color: var(--primary);
+}
+
+/* Writing Area */
+.writing-container {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.textarea-wrapper {
+	background-color: var(--white);
+	border-radius: 0.75rem;
+	border: 2px solid var(--slate-200);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	min-height: 200px;
+	transition: border-color 0.2s;
+}
+
+.textarea-wrapper:focus-within {
+	border-color: var(--primary);
+}
+
+.textarea-toolbar {
+	padding: 0.75rem 1.5rem;
+	border-bottom: 1px solid var(--slate-100);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: rgba(248, 250, 252, 0.5);
+}
+
+.textarea-toolbar-title {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--slate-500);
+}
+
+.story-textarea {
+	width: 100%;
+	flex: 1;
+	padding: 1.5rem;
+	font-size: 1.125rem;
+	line-height: 1.75;
+	background-color: transparent;
+	border: none;
+	resize: none;
+	color: var(--slate-800);
+	font-family: "Lexend", sans-serif;
+}
+
+.story-textarea:focus {
+	outline: none;
+}
+
+.story-textarea::placeholder {
+	color: var(--slate-300);
+}
+
+.textarea-footer {
+	padding: 0.75rem 1.5rem;
+	border-top: 1px solid var(--slate-100);
+	display: flex;
+	justify-content: flex-end;
+}
+
+.character-count {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--slate-400);
+}
+
+/* Progress Section */
+.progress-section {
+	margin-top: 2rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--slate-100);
+}
+
+.progress-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	margin-bottom: 0.5rem;
+}
+
+.progress-label {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--slate-500);
+}
+
+.progress-value {
+	font-size: 0.875rem;
+	font-weight: 700;
+	color: var(--primary);
+}
+
+.progress-bar-bg {
+	width: 100%;
+	background-color: var(--slate-100);
+	height: 0.5rem;
+	border-radius: 9999px;
+	overflow: hidden;
+}
+
+.progress-bar-fill {
+	background-color: var(--primary);
+	height: 100%;
+	width: 20%;
+	transition: width 0.5s;
+}
