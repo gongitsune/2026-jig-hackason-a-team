@@ -1,0 +1,6 @@
+# ローカル Docker PostgreSQL 用（docker compose up -d で起動）
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/app
+    username: app
+    password: app
