@@ -162,6 +162,12 @@ main {
 	color: var(--primary);
 }
 
+.word-button:disabled {
+	border-color: var(--primary);
+	color: var(--primary);
+	cursor: not-allowed;
+}
+
 /* Writing Area */
 .writing-container {
 	flex: 1;
@@ -272,4 +278,41 @@ main {
 	height: 100%;
 	width: 20%;
 	transition: width 0.5s;
+}
+
+/* Submit Area */
+.submit-area {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.submit-button {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.75rem 2.5rem;
+	background-color: var(--primary);
+	color: white;
+	border-radius: 0.5rem;
+	font-weight: 700;
+	box-shadow: 0 10px 15px -3px rgba(54, 140, 226, 0.2);
+	border: none;
+	cursor: pointer;
+	font-family: "Lexend", sans-serif;
+	font-size: 1rem;
+	transition: all 0.2s;
+}
+
+.submit-button:hover {
+	background-color: rgba(54, 140, 226, 0.9);
+}
+
+.submit-button:active {
+	transform: scale(0.95);
+}
+
+.submit-button:disabled {
+	background-color: var(--slate-300);
+	cursor: not-allowed;
+	box-shadow: none;
 }
