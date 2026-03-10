@@ -5,11 +5,15 @@ const memberListItems = document.getElementById("member-list-items");
 const startButton = document.getElementById("start-button");
 const targetGoal = document.getElementById("target-goal");
 const resultSentences = document.getElementById("result-sentences");
+const beforeResultSection = document.getElementById("before-result");
 
 const updateContents = (roomStatus) => {
 	// 目標の表示（直近の pastResults があればその goal、なければ room の goal）
 	const pastResults = roomStatus.pastResults || [];
 	const lastRound = pastResults[pastResults.length - 1];
+
+	// 過去結果がないときはセクションを非表示
+	beforeResultSection.hidden = !lastRound;
 	targetGoal.textContent = lastRound?.goal || roomStatus.goal || "";
 
 	// pastResults から各メンバーの合計得点を計算
