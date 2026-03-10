@@ -59,4 +59,12 @@ public class SentenceDao {
         );
         return count != null ? count : 0;
     }
+
+    public boolean existsByRoomPassphraseAndUserIdAndRound(String roomPassphrase, String userId, int round) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM sentences WHERE room_passphrase = ? AND user_id = ? AND round = ?",
+                Integer.class, roomPassphrase, userId, round
+        );
+        return count != null && count > 0;
+    }
 }
