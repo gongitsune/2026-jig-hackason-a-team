@@ -6,8 +6,8 @@ const startButton = document.getElementById("start-button");
 const targetGoal = document.getElementById("target-goal");
 const resultSentences = document.getElementById("result-sentences");
 
-addRoomStatusListener((roomStatus) => {
-	// 目標の表示
+const updateContents = (roomStatus) => {
+	// TODO: 前回の目標の表示
 	targetGoal.textContent = roomStatus.goal;
 
 	// メンバーリストの更新
@@ -33,12 +33,14 @@ addRoomStatusListener((roomStatus) => {
 
 	// 前回投票結果の表示
 	resultSentences.innerHTML = ""; // 一旦リセット
-	roomStatus.members.forEach((member) => {
-		const result = member.beforeResult[0];
+	roomStatus.members
+		.filter((member) => member.beforeResult.length > 0)
+		.forEach((member) => {
+			const result = member.beforeResult[0];
 
-		const listItem = document.createElement("li");
-		listItem.classList.add("user-info");
-		listItem.innerHTML = `
+			const listItem = document.createElement("li");
+			listItem.classList.add("user-info");
+			listItem.innerHTML = `
       <div class="user-info">
         <span class="material-symbols-outlined">account_circle</span>
         <span class="user-name">${member.name}</span>
@@ -49,14 +51,17 @@ addRoomStatusListener((roomStatus) => {
       </div>
     `;
 
-		resultSentences.appendChild(listItem);
-	});
+			resultSentences.appendChild(listItem);
+		});
 
 	// ステータスを見て次の画面に遷移
 	if (roomStatus.status === "WORD_INPUT") {
 		window.location.href = "/word.html";
 	}
-});
+};
+
+updateContents(await API.getRoomStatus());
+addRoomStatusListener(updateContents);
 
 // スタートボタンの処理
 startButton.addEventListener("click", async () => {
