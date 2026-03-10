@@ -24,7 +24,7 @@ public class UserController {
             @RequestBody JsonNode data
     ) {
         User user = new User(
-            headers.get("X-User-Id"),
+            headers.get("x-user-id"),
             JsonUtils.asOptionalString(data.get("roomPassphrase")),
             data.get("name").asText()
         );
