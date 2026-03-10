@@ -1,4 +1,4 @@
-import { API, getRoomStatus } from "./api";
+import { API, getRoomStatus } from "./api.js";
 
 // HTML要素の取得
 const memberListItems = document.getElementById("member-list-items");

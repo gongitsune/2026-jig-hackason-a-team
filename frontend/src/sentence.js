@@ -1,4 +1,4 @@
-import { API, getRoomStatus } from "./api";
+import { API, getRoomStatus } from "./api.js";
 
 // 定数
 const MAX_CHAR_COUNT = 30;
