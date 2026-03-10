@@ -41,7 +41,8 @@ public class WordDao {
             return ps;
         }, keyHolder);
 
-        long id = keyHolder.getKey() != null ? keyHolder.getKey().longValue() : 0;
+        Number key = keyHolder.getKeys() != null ? (Number) keyHolder.getKeys().get("id") : null;
+        long id = key != null ? key.longValue() : 0;
         return new Word(id, word.roomPassphrase(), word.userId(), word.round(), word.value());
     }
 

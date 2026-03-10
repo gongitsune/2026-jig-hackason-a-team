@@ -18,3 +18,8 @@
 		margin-top: 1rem;
 	}
 }
+
+.join-button:disabled {
+	background-color: var(--slate-300);
+	cursor: not-allowed;
+}

@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/rooms/{passphrase}/words")
+@RequestMapping("/rooms/{passphrase}/words")
 public class WordController {
 
     private static final String USER_ID_HEADER = "X-User-Id";

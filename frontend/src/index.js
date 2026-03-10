@@ -1,13 +1,18 @@
-import { API } from "./api.js";
+import { API, addRoomStatusListener } from "./api.js";
 
 // HTML要素を取得
 const joinForm = document.getElementById("join-form");
+const joinButton = document.getElementById("join-button");
+const passphraseInput = document.getElementById("room-id-input");
 
 // ユーザIDを生成
 if (!localStorage.getItem("userId")) {
 	const userId = self.crypto.randomUUID();
 	localStorage.setItem("userId", userId);
 }
+
+// パスフレーズを消す
+localStorage.removeItem("passphrase");
 
 // フォームの送信イベントを処理
 joinForm.addEventListener("submit", async (event) => {
@@ -24,8 +29,27 @@ joinForm.addEventListener("submit", async (event) => {
 	// サーバーに参加リクエストを送信
 	try {
 		await API.postName(name);
+		await API.joinRoom();
+
+		// 参加成功後、ゲーム画面に遷移
+		window.location.href = "/start.html";
 	} catch (error) {
 		// TODO: UIとして表示してあげたほうが親切かも
-		window.alert("参加に失敗しました。この部屋は現在ゲーム中です。");
+		window.alert("参加に失敗しました。時間をおいてもう一度試してください。");
 	}
+});
+
+passphraseInput.addEventListener("input", () => {
+	localStorage.setItem("passphrase", passphraseInput.value);
+	if (!passphraseInput.value) {
+		joinButton.disabled = true;
+	}
+});
+
+// 参加ボタンの有効無効を切り替え
+joinButton.disabled = true; // 初期状態では無効
+addRoomStatusListener((roomStatus) => {
+	const isGameStarted = roomStatus.status === "WAITING";
+	console.log("Room status updated:", roomStatus);
+	joinButton.disabled = !isGameStarted;
 });

@@ -1,8 +1,12 @@
-import { API } from "./api";
+import { API, getRoomStatus } from "./api.js";
 
 // HTML要素を取得
 const voteForm = document.getElementById("vote-form");
 const sentenceContainer = document.getElementById("sentence-container");
+const goalElement = document.getElementById("target-goal");
+
+// 目標の表示
+goalElement.textContent = getRoomStatus().goal;
 
 // フォームの送信イベントを処理
 voteForm.addEventListener("submit", async (event) => {
@@ -10,25 +14,25 @@ voteForm.addEventListener("submit", async (event) => {
 
 	// フォームデータを取得
 	const formData = new FormData(voteForm);
-	const choose = formData.get("sentence-list");
+	const chooseUserId = formData.get("sentence-list");
 
-	// TODO: APIに投票データを送信
-	console.log("投票データ:", choose);
+	if (!chooseUserId) {
+		window.alert("投票する文書を選択してください。");
+		return;
+	}
+
+	await API.postVote(chooseUserId);
 });
 
 // 全員分の文書を表示
-// TODO: APIから文書データを取得して表示するように変更
-const sentences = [
-	"アバダケダブラ",
-	"旬の成果がお買い得",
-	"春の新作が続々入荷",
-];
+getRoomStatus().members.forEach((member) => {
+	const sentence = member.sentence;
 
-sentences.forEach((sentence) => {
 	const input = document.createElement("input");
 	input.type = "radio";
 	input.name = "sentence-list";
-	input.value = sentence;
+	input.required = true;
+	input.value = member.userId;
 
 	const span = document.createElement("span");
 	span.classList.add("card-text");

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/rooms/{passphrase}/sentences")
+@RequestMapping("/rooms/{passphrase}/sentences")
 public class SentenceController {
 
     private static final String USER_ID_HEADER = "X-User-Id";
