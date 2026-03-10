@@ -1,11 +1,8 @@
-import { API, getRoomStatus } from "./api.js";
+import { API, addRoomStatusListener, getRoomStatus } from "./api.js";
 
 // 定数
 const MAX_CHAR_COUNT = 30;
 const MIN_WORD_COUNT = 3;
-
-const getWordList = () => getRoomStatus().distributedWords;
-const getGoal = () => getRoomStatus().goal;
 
 // HTML要素の取得
 const goalElement = document.getElementById("target-goal");
@@ -18,12 +15,22 @@ const wordContainer = document.getElementById("word-container");
 
 const submitButton = document.getElementById("submit-button");
 
+// ルームステータスを取得
+const roomStatus = await API.getRoomStatus();
+
+// ルームステータスを監視
+addRoomStatusListener((updatedStatus) => {
+	if (updatedStatus.status === "VOTE_INPUT") {
+		window.location.href = "/vote.html";
+	}
+});
+
 // 目標の表示
-goalElement.innerText = getGoal();
+goalElement.innerText = roomStatus.goal;
 
 // 単語表示
 wordSectionTitle.innerText = `単語リスト (${MIN_WORD_COUNT}つ以上含めてください)`;
-const wordButtons = getWordList().map((word) => {
+const wordButtons = roomStatus.distributedWords.map((word) => {
 	const wordElement = document.createElement("button");
 	wordElement.type = "button";
 	wordElement.className = "word-button";
@@ -56,7 +63,7 @@ const onInput = () => {
 	});
 
 	// 送信ボタンの有効/無効を切り替える
-	const wordCount = getWordList().filter((word) =>
+	const wordCount = roomStatus.distributedWords.filter((word) =>
 		sentenceInput.value.includes(word),
 	).length;
 	submitButton.disabled = wordCount < MIN_WORD_COUNT;
@@ -81,7 +88,12 @@ submitButton.addEventListener("click", () => {
 	const sentence = sentenceInput.value;
 	console.log("送信された文章:", sentence);
 
+	const buttonText = submitButton.innerText;
+	submitButton.disabled = true;
+	submitButton.innerText = "送信中...";
 	API.postSentence(sentence).catch((error) => {
 		console.error("Failed to post sentence:", error);
+		submitButton.innerText = buttonText;
+		submitButton.disabled = false;
 	});
 });

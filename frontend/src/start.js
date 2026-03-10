@@ -1,4 +1,4 @@
-import { API, getRoomStatus } from "./api.js";
+import { API, addRoomStatusListener } from "./api.js";
 
 // HTML要素の取得
 const memberListItems = document.getElementById("member-list-items");
@@ -6,19 +6,21 @@ const startButton = document.getElementById("start-button");
 const targetGoal = document.getElementById("target-goal");
 const resultSentences = document.getElementById("result-sentences");
 
-// 目標の表示
-targetGoal.textContent = getRoomStatus().goal;
+addRoomStatusListener((roomStatus) => {
+	// 目標の表示
+	targetGoal.textContent = roomStatus.goal;
 
-// メンバーリストの表示
-getRoomStatus().members.forEach((member) => {
-	const listItem = document.createElement("li");
-	listItem.classList.add("member-list-item");
+	// メンバーリストの更新
+	memberListItems.innerHTML = ""; // 一旦リセット
+	roomStatus.members.forEach((member) => {
+		const listItem = document.createElement("li");
+		listItem.classList.add("member-list-item");
 
-	const point = member.beforeResult.reduce(
-		(sum, result) => sum + result.voteCount,
-		0,
-	);
-	listItem.innerHTML = `
+		const point = member.beforeResult.reduce(
+			(sum, result) => sum + result.voteCount,
+			0,
+		);
+		listItem.innerHTML = `
     <div class="member-name">
       <span class="material-symbols-outlined">account_circle</span>
       ${member.name}
@@ -26,16 +28,17 @@ getRoomStatus().members.forEach((member) => {
     <span class="point"> ${point}pt </span>
   `;
 
-	memberListItems.appendChild(listItem);
-});
+		memberListItems.appendChild(listItem);
+	});
 
-// 前回投票結果の表示
-getRoomStatus().members.forEach((member) => {
-	const result = member.beforeResult[0];
+	// 前回投票結果の表示
+	resultSentences.innerHTML = ""; // 一旦リセット
+	roomStatus.members.forEach((member) => {
+		const result = member.beforeResult[0];
 
-	const listItem = document.createElement("li");
-	listItem.classList.add("user-info");
-	listItem.innerHTML = `
+		const listItem = document.createElement("li");
+		listItem.classList.add("user-info");
+		listItem.innerHTML = `
     <div class="user-info">
       <span class="material-symbols-outlined">account_circle</span>
       <span class="user-name">${member.name}</span>
@@ -46,13 +49,22 @@ getRoomStatus().members.forEach((member) => {
     </div>
   `;
 
-	resultSentences.appendChild(listItem);
+		resultSentences.appendChild(listItem);
+	});
+
+	// ステータスを見て次の画面に遷移
+	if (roomStatus.status === "WORD_INPUT") {
+		window.location.href = "/word.html";
+	}
 });
 
 // スタートボタンの処理
 startButton.addEventListener("click", async () => {
 	try {
 		await API.startGame();
+
+		startButton.disabled = true;
+		startButton.textContent = "ゲーム開始中...";
 	} catch (error) {
 		console.error("ゲームの開始に失敗しました:", error);
 		window.alert("ゲームの開始に失敗しました。もう一度試してください。");
