@@ -106,23 +106,37 @@ const server = http.createServer((req, res) => {
 							s.round === room.round,
 					);
 
-					// 前回の結果（簡易的に現在の文をカウント）
-					const voteCount = votes.filter((v) => {
-						const s = sentences.find((sent) => sent.id === v.sentenceId);
-						return s && s.userId === id;
-					}).length;
-
 					return {
 						userId: id,
 						name: user.name,
-						sentence: userSentence ? userSentence.value : "",
-						beforeResult: [
-							{
-								sentence: "前回の傑作",
-								voteCount: voteCount,
-							},
-						],
+						sentence: userSentence ? userSentence.value : null,
 					};
+				});
+
+				// 過去ラウンドの結果を構築
+				const currentRound = room.round || 1;
+				const roomSentences = sentences.filter((s) => s.roomPassphrase === passphrase);
+				const pastRoundNumbers =
+					currentRound > 1
+						? Array.from({ length: currentRound - 1 }, (_, i) => i + 1)
+						: [...new Set(roomSentences.map((s) => s.round))].sort((a, b) => a - b);
+				const pastResults = pastRoundNumbers.map((round) => {
+					const roundSentences = sentences.filter(
+						(s) => s.roomPassphrase === passphrase && s.round === round,
+					);
+					const results = roundSentences.map((s) => {
+						const voteCount = votes.filter((v) => v.sentenceId === s.id).length;
+						const user = users[s.userId] || { name: "Unknown" };
+						return {
+							userId: s.userId,
+							name: user.name,
+							sentence: s.value,
+							voteCount,
+						};
+					});
+					// モックでは room の goal を各ラウンドに使用
+					const goal = room.goal || "最高の文書を作る";
+					return { round, goal, results };
 				});
 
 				res.writeHead(200, { "Content-Type": "application/json" });
@@ -131,7 +145,8 @@ const server = http.createServer((req, res) => {
 						status: room.status,
 						goal: "最高の文書を作る",
 						members: roomMembers,
-						distributedWords: room.distributedWords,
+						distributedWords: room.distributedWords || [],
+						pastResults,
 					}),
 				);
 				return;
