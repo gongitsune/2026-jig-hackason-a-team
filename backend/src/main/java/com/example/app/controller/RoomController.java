@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+
+import com.example.app.pkgs.json.JsonLoader;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,13 +27,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 @RestController
 @RequestMapping("/rooms")
 public class RoomController {
-
-    private static final List<String> DEFAULT_GOALS = List.of(
-            "一番食べたくない食べ物",
-            "最高の文書を作る",
-            "世界で一番欲しいもの",
-            "最も驚いたこと"
-    );
+    private static final List<String> DEFAULT_GOALS = JsonLoader.loadStringArray("goals.json");
+    private static final List<String> DEFAULT_WORDS = JsonLoader.loadStringArray("words.json");
 
     private final JdbcTemplate jdbcTemplate;
     private final RoomDao roomDao;
