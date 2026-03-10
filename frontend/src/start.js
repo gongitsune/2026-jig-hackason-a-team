@@ -5,11 +5,16 @@ const memberListItems = document.getElementById("member-list-items");
 const startButton = document.getElementById("start-button");
 const targetGoal = document.getElementById("target-goal");
 const resultSentences = document.getElementById("result-sentences");
+const goBackButton = document.getElementById("back-button");
+const beforeResultSection = document.getElementById("before-result");
 
 const updateContents = (roomStatus) => {
 	// 目標の表示（直近の pastResults があればその goal、なければ room の goal）
 	const pastResults = roomStatus.pastResults || [];
 	const lastRound = pastResults[pastResults.length - 1];
+
+	// 過去結果がないときはセクションを非表示
+	beforeResultSection.hidden = !lastRound;
 	targetGoal.textContent = lastRound?.goal || roomStatus.goal || "";
 
 	// pastResults から各メンバーの合計得点を計算
@@ -65,7 +70,7 @@ const updateContents = (roomStatus) => {
 
 	// ステータスを見て次の画面に遷移
 	if (roomStatus.status === "WORD_INPUT") {
-		window.location.href = "/word.html";
+		window.location.href = "./word.html";
 	}
 };
 
@@ -83,4 +88,9 @@ startButton.addEventListener("click", async () => {
 		console.error("ゲームの開始に失敗しました:", error);
 		window.alert("ゲームの開始に失敗しました。もう一度試してください。");
 	}
+});
+
+//index.htmlに戻す処理
+goBackButton.addEventListener("click", async () => {
+	location.href = "./index.html";
 });

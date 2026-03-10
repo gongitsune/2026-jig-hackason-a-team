@@ -1,4 +1,4 @@
-import { API, addRoomStatusListener, getRoomStatus } from "./api.js";
+import { API, addRoomStatusListener } from "./api.js";
 
 // 定数
 const MAX_CHAR_COUNT = 30;
@@ -21,7 +21,7 @@ const roomStatus = await API.getRoomStatus();
 // ルームステータスを監視
 addRoomStatusListener((updatedStatus) => {
 	if (updatedStatus.status === "VOTE_INPUT") {
-		window.location.href = "/vote.html";
+		window.location.href = "./vote.html";
 	}
 });
 

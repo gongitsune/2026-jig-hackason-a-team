@@ -12,7 +12,7 @@ const roomStatus = await API.getRoomStatus();
 // ルームステータスを監視
 addRoomStatusListener((updatedStatus) => {
 	if (updatedStatus.status === "WAITING") {
-		window.location.href = "/start.html";
+		window.location.href = "./start.html";
 	}
 });
 

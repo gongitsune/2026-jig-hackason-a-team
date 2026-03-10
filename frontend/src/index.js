@@ -31,7 +31,7 @@ joinForm.addEventListener("submit", async (event) => {
 		await API.joinRoom(name);
 
 		// 参加成功後、ゲーム画面に遷移
-		window.location.href = "/start.html";
+		window.location.href = "./start.html";
 	} catch (error) {
 		console.error("Failed to join room:", error);
 		// TODO: UIとして表示してあげたほうが親切かも

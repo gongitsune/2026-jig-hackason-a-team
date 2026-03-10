@@ -19,10 +19,13 @@
     <link href="style/start.css" rel="stylesheet" />
     <script src="src/start.js" defer type="module"></script>
     <script src="src/pooling.js" defer type="module"></script>
-    <title>突発単語ゲーム - 結果</title>
+    <title>ICHIBUN GRAND PRIX - 結果</title>
   </head>
   <body>
     <div class="container">
+      <div class="back-container">
+        <button type="button" id="back-button">最初に戻る</button>
+      </div>
       <div class="member-list">
         <section class="card">
           <div class="section-header">
@@ -39,8 +42,8 @@
         </button>
       </div>
 
-      <!-- Before result -->
-      <div class="before-result card">
+      <!-- Before result（過去結果があるときのみ表示） -->
+      <div class="before-result card" id="before-result" hidden>
         <!-- 前回投票結果を表示するため、結果がなければ空にする -->
         <!-- Target Goal -->
         <section>

@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:8080";
+const BACKEND_URL = "https://two026-jig-hackason-a-team.onrender.com";
 
 export const getUserId = () => {
 	const value = localStorage.getItem("userId");
@@ -68,36 +68,6 @@ export const API = {
 };
 
 // ルームステータス
-const mockStatus = {
-	status: "WAITING",
-	goal: "最高の文書を作る",
-	members: [
-		{ userId: "user1", name: "Alice", sentence: null },
-		{ userId: "user2", name: "Bob", sentence: null },
-	],
-	distributedWords: [
-		"猫",
-		"セール",
-		"春",
-		"新作",
-		"入荷",
-		"最高",
-		"文書",
-		"作る",
-	],
-	pastResults: [
-		{
-			round: 1,
-			goal: "最高の文書を作る",
-			results: [
-				{ userId: "user1", name: "Alice", sentence: "アバダケダブラ", voteCount: 3 },
-				{ userId: "user2", name: "Bob", sentence: "旬の成果がお買い得", voteCount: 5 },
-			],
-		},
-	],
-};
-
-export const getRoomStatus = () => window.roomStatus || mockStatus;
 export const addRoomStatusListener = (listener) => {
 	window.addEventListener("roomStatusUpdate", (e) => listener(e.detail));
 };

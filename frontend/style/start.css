@@ -87,3 +87,30 @@
 		padding-top: 1rem;
 	}
 }
+
+.back-container{
+  display: flex;
+  justify-content: end;
+}
+
+#back-button {
+	padding: 0.2rem 1.2rem;
+  margin-bottom:5px;
+  margin-right: 3px;
+	background-color: var(--primary);
+	color: white;
+	border-radius: 0.5rem;
+	font-weight: 700;
+	box-shadow: 0 10px 15px -3px rgba(54, 140, 226, 0.2);
+	border: none;
+	font-size: 0.7rem;
+	transition: all 0.2s;
+}
+
+#back-button:hover {
+	background-color: rgba(54, 140, 226, 0.9);
+}
+
+#back-button:active {
+	transform: scale(0.95);
+}
