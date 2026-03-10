@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:8000";
+const BACKEND_URL = "http://localhost:1234";
 
 const getUserId = () => {
 	const value = localStorage.getItem("userId");
@@ -109,3 +109,6 @@ const mockStatus = {
 };
 
 export const getRoomStatus = () => window.roomStatus || mockStatus;
+export const addRoomStatusListener = (listener) => {
+	window.addEventListener("roomStatusUpdate", (e) => listener(e.detail));
+};
