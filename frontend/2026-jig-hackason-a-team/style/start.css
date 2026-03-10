@@ -72,12 +72,14 @@
 		.sentence-vote {
 			display: flex;
 			justify-content: space-between;
+			gap: 0.5rem;
 			color: var(--slate-700);
 			font-size: 1.2rem;
 
 			.vote-count {
 				color: var(--slate-500);
 				font-size: 1rem;
+				min-width: max-content;
 			}
 		}
 	}
@@ -88,15 +90,15 @@
 	}
 }
 
-.back-container{
-  display: flex;
-  justify-content: end;
+.back-container {
+	display: flex;
+	justify-content: end;
 }
 
 #back-button {
 	padding: 0.2rem 1.2rem;
-  margin-bottom:5px;
-  margin-right: 3px;
+	margin-bottom: 5px;
+	margin-right: 3px;
 	background-color: var(--primary);
 	color: white;
 	border-radius: 0.5rem;
@@ -114,3 +116,4 @@
 #back-button:active {
 	transform: scale(0.95);
 }
+
