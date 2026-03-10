@@ -1,0 +1,112 @@
+/* Reset and Base Styles */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+:root {
+	--primary: #368ce2;
+	--background-light: #f6f7f8;
+	--white: #ffffff;
+	--slate-50: #f8fafc;
+	--slate-100: #f1f5f9;
+	--slate-200: #e2e8f0;
+	--slate-300: #cbd5e1;
+	--slate-400: #94a3b8;
+	--slate-500: #64748b;
+	--slate-600: #475569;
+	--slate-700: #334155;
+	--slate-800: #1e293b;
+	--slate-900: #0f172a;
+	--green-100: #dcfce7;
+	--green-400: #4ade80;
+	--green-500: #22c55e;
+	--green-600: #16a34a;
+	--green-900: #14532d;
+}
+
+body {
+	font-family: "Lexend", sans-serif;
+	background-color: var(--background-light);
+	color: var(--slate-900);
+	min-height: 100vh;
+	margin: 0;
+}
+
+.container {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 0 1rem;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+/* Card */
+.card {
+	background-color: var(--white);
+	padding: 1.5rem;
+	border-radius: 0.75rem;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	border: 1px solid var(--slate-200);
+}
+
+.section-header {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.section-header .material-symbols-outlined {
+	color: var(--primary);
+}
+
+.section-title {
+	font-size: 0.875rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--slate-500);
+}
+
+.card-large-text {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--slate-800);
+	line-height: 1.25;
+}
+
+/* List */
+ul {
+	list-style: none;
+}
+
+/* Submit Button */
+.submit-button {
+	padding: 0.75rem 2.5rem;
+	background-color: var(--primary);
+	color: white;
+	border-radius: 0.5rem;
+	font-weight: 700;
+	box-shadow: 0 10px 15px -3px rgba(54, 140, 226, 0.2);
+	border: none;
+	font-size: 1rem;
+	transition: all 0.2s;
+}
+
+.submit-button:hover {
+	background-color: rgba(54, 140, 226, 0.9);
+}
+
+.submit-button:active {
+	transform: scale(0.95);
+}
+
+.submit-button:disabled {
+	background-color: var(--slate-300);
+	cursor: not-allowed;
+	box-shadow: none;
+}

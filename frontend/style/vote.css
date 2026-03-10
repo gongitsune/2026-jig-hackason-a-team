@@ -1,0 +1,47 @@
+/* Sentences List */
+.sentence-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin-top: 2rem;
+}
+
+.list-description {
+	font-size: 0.875rem;
+	color: var(--slate-500);
+	margin-bottom: 1rem;
+	margin-top: 2rem;
+}
+
+fieldset {
+	border: none;
+}
+
+.card:has(input[type="radio"]):hover {
+	border-color: var(--primary);
+	color: var(--primary);
+}
+
+.card:has(input[type="radio"]:checked) {
+	border-color: var(--primary);
+	color: var(--primary);
+}
+
+.card {
+	input {
+		display: none;
+	}
+}
+
+.sentence-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+/* Vote Button */
+.submit-area {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 2rem;
+}

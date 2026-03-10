@@ -15,8 +15,9 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
       rel="stylesheet"
     />
+    <link href="style/global.css" rel="stylesheet" />
     <link href="style/sentence.css" rel="stylesheet" />
-
+    <script src="src/sentence.js" defer type="module"></script>
     <title>突発単語ゲーム - 文書作成</title>
   </head>
   <body>
@@ -28,7 +29,7 @@
             <span class="material-symbols-outlined">target</span>
             <h2 class="section-title">目標</h2>
           </div>
-          <p class="mission-text">一番食べたくない食べ物</p>
+          <p class="card-large-text">一番食べたくない食べ物</p>
         </section>
 
         <!-- Word Bank -->
@@ -36,20 +37,11 @@
           <div class="word-bank-header">
             <div class="word-bank-header-left">
               <span class="material-symbols-outlined">inventory_2</span>
-              <h3 class="section-title">単語リスト</h3>
+              <h3 class="section-title" id="word-section-title">単語リスト</h3>
             </div>
             <span class="word-bank-hint">単語をクリックして挿入</span>
           </div>
-          <div class="word-buttons">
-            <button type="button" class="word-button">ネチネチ</button>
-            <button type="button" class="word-button">激辛</button>
-            <button type="button" class="word-button">激臭</button>
-            <button type="button" class="word-button">酸っぱい</button>
-            <button type="button" class="word-button">カナダ</button>
-            <button type="button" class="word-button">カチカチ</button>
-            <button type="button" class="word-button">窓</button>
-            <button type="button" class="word-button">ゲーム</button>
-          </div>
+          <div class="word-buttons" id="word-container"></div>
         </section>
 
         <!-- Writing Area -->
@@ -60,13 +52,21 @@
             </div>
             <textarea
               class="story-textarea"
+              id="story-textarea"
               placeholder="ここに文書を入力してください..."
             ></textarea>
             <div class="textarea-footer">
-              <span class="character-count">8 / 20 文字</span>
+              <span class="character-count" id="char-counter">8 / 20 文字</span>
             </div>
           </div>
         </section>
+
+        <!-- Submit Area -->
+        <div class="submit-area">
+          <button type="button" class="submit-button" id="submit-button">
+            提出
+          </button>
+        </div>
       </div>
     </div>
   </body>
