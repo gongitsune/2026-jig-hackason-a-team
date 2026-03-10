@@ -32,7 +32,8 @@ fieldset {
 
 body {
 	font-family: "Lexend", sans-serif;
-	background-color: var(--background-light);
+	/* 3D背景を見せるために透明にする。実際の背景色は bg-3d.js で設定 */
+	background-color: transparent; 
 	color: var(--slate-900);
 	min-height: 100vh;
 	margin: 0;
