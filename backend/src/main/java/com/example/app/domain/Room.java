@@ -6,6 +6,7 @@ package com.example.app.domain;
 public record Room(
         String passphrase,
         String status,
-        int round
+        int round,
+        String goal
 ) {
 }
