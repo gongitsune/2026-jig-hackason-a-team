@@ -15,7 +15,8 @@ public class RoomDao {
     private static final RowMapper<Room> ROW_MAPPER = (rs, rowNum) -> new Room(
             rs.getString("passphrase"),
             rs.getString("status"),
-            rs.getInt("round")
+            rs.getInt("round"),
+            rs.getString("goal")
     );
 
     public RoomDao(JdbcTemplate jdbcTemplate) {
@@ -24,14 +25,14 @@ public class RoomDao {
 
     public void insert(Room room) {
         jdbcTemplate.update(
-                "INSERT INTO rooms (passphrase, status, round) VALUES (?, ?, ?)",
-                room.passphrase(), room.status(), room.round()
+                "INSERT INTO rooms (passphrase, status, round, goal) VALUES (?, ?, ?, ?)",
+                room.passphrase(), room.status(), room.round(), room.goal()
         );
     }
 
     public Optional<Room> findByPassphrase(String passphrase) {
         List<Room> results = jdbcTemplate.query(
-                "SELECT passphrase, status, round FROM rooms WHERE passphrase = ?",
+                "SELECT passphrase, status, round, goal FROM rooms WHERE passphrase = ?",
                 ROW_MAPPER, passphrase
         );
         return results.isEmpty() ? Optional.empty() : Optional.of(results.getFirst());

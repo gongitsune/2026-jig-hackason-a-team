@@ -2,7 +2,8 @@
 CREATE TABLE rooms (
     passphrase VARCHAR(255) PRIMARY KEY,
     status VARCHAR(50) NOT NULL DEFAULT 'WAITING',
-    round INT NOT NULL DEFAULT 1
+    round INT NOT NULL DEFAULT 1,
+    goal VARCHAR(255) NOT NULL DEFAULT ''
 );
 
 -- users: id PK, room_passphrase FK, name
