@@ -25,7 +25,14 @@ public class UserDao {
     public void insert(User user) {
         jdbcTemplate.update(
                 "INSERT INTO users (id, room_passphrase, name) VALUES (?, ?, ?)",
-                user.id(), user.roomPassphrase(), user.name()
+                user.id(), user.roomPassphrase().orElse(null), user.name()
+        );
+    }
+
+    public void updateRoomAndName(String id, String roomPassphrase, String name) {
+        jdbcTemplate.update(
+                "UPDATE users SET room_passphrase = ?, name = ? WHERE id = ?",
+                roomPassphrase, name, id
         );
     }
 
