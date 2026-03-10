@@ -1,25 +1,53 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html class="light" lang="ja">
   <head>
-    <title>
-      突発単語会話
-    </title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="style/global.css"/>
-    <link rel="stylesheet" href="style/index.css"/>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="style/global.css" rel="stylesheet" />
+    <link href="style/index.css" rel="stylesheet" />
+    <script src="src/index.js" defer type="module"></script>
+    <title>突発単語ゲーム</title>
   </head>
   <body>
-    <div>
-      <h1>突発単語会話</h1>
+    <div class="container">
+      <h1 class="title">突発単語ゲーム</h1>
+
+      <form class="join-form card" id="join-form">
+        <label for="username-input">ユーザー名</label>
+        <input
+          id="username-input"
+          name="username"
+          placeholder="ユーザー名を入力してください"
+          required
+          type="text"
+        />
+
+        <label for="room-id-input">合言葉</label>
+        <input
+          id="room-id-input"
+          name="passphrase"
+          placeholder="合言葉を入力してください"
+          required
+          type="text"
+        />
+
+        <button id="join-button" class="submit-button" type="submit">
+          参加
+        </button>
+      </form>
     </div>
-    <div>
-      <label for="pass">合言葉:</label>
-      <input id="pass"/>
-    </div>
-    <div>
-      <label for="name">表示名:</label>
-      <input id="name"/>
-    </div>
-    <button id="roomin">入室</button>
   </body>
 </html>
+

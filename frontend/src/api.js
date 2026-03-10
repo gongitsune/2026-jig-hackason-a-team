@@ -3,15 +3,17 @@ const BACKEND_URL = "http://localhost:8000";
 let userId = localStorage.getItem("userId");
 let passphrase = localStorage.getItem("passphrase");
 
-if (!userId || !passphrase) {
-	window.alert("トップページから再度アクセスしてください。");
+document.addEventListener("load", () => {
+	if (!userId || !passphrase) {
+		window.alert("トップページから再度アクセスしてください。");
 
-	// TODO: デバッグ用
-	localStorage.setItem("userId", "test-user-id");
-	localStorage.setItem("passphrase", "test-passphrase");
-	userId = localStorage.getItem("userId");
-	passphrase = localStorage.getItem("passphrase");
-}
+		// TODO: デバッグ用
+		localStorage.setItem("userId", "test-user-id");
+		localStorage.setItem("passphrase", "test-passphrase");
+		userId = localStorage.getItem("userId");
+		passphrase = localStorage.getItem("passphrase");
+	}
+});
 
 async function GET(endpoint) {
 	const response = await fetch(`${BACKEND_URL}${endpoint}`, {
