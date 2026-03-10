@@ -9,10 +9,11 @@
 .list-description {
 	font-size: 0.875rem;
 	color: var(--slate-500);
-	margin-bottom: 0.5rem;
+	margin-bottom: 1rem;
+	margin-top: 2rem;
 }
 
-.sentence-list {
+fieldset {
 	border: none;
 }
 
@@ -30,6 +31,12 @@
 	input {
 		display: none;
 	}
+}
+
+.sentence-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
 }
 
 /* Vote Button */

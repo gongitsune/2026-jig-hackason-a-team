@@ -17,6 +17,7 @@
     />
     <link href="style/global.css" rel="stylesheet" />
     <link href="style/vote.css" rel="stylesheet" />
+    <script src="src/vote.js" defer type="module"></script>
     <title>突発単語ゲーム - 文書作成</title>
   </head>
   <body>
@@ -32,30 +33,19 @@
         </section>
 
         <!-- Sentences -->
-        <fieldset class="sentence-list">
-          <legend class="list-description">
-            一番目標と近いと思うものを選んでください。
-          </legend>
+        <form id="vote-form">
+          <fieldset>
+            <legend class="list-description">
+              一番目標と近いと思うものを選んでください。
+            </legend>
 
-          <label class="card">
-            <input type="radio" name="sentence-list" value="sentence-1" />
-            <span class="card-text">ベチャベチャの激安納豆炒め</span>
-          </label>
+            <div class="sentence-container" id="sentence-container"></div>
 
-          <label class="card">
-            <input type="radio" name="sentence-list" value="sentence-2" />
-            <span class="card-text">ベチャベチャの激安納豆炒め</span>
-          </label>
-
-          <label class="card">
-            <input type="radio" name="sentence-list" value="sentence-3" />
-            <span class="card-text">ベチャベチャの激安納豆炒め</span>
-          </label>
-
-          <div class="submit-area">
-            <button class="submit-button" type="submit">投票</button>
-          </div>
-        </fieldset>
+            <div class="submit-area">
+              <button class="submit-button" type="submit">投票</button>
+            </div>
+          </fieldset>
+        </form>
       </div>
     </div>
   </body>
