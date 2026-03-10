@@ -1,4 +1,4 @@
-import { API, addRoomStatusListener } from "./api.js";
+import { API, addRoomStatusListener, getUserId } from "./api.js";
 
 // HTML要素を取得
 const voteForm = document.getElementById("vote-form");
@@ -39,23 +39,25 @@ voteForm.addEventListener("submit", async (event) => {
 });
 
 // 全員分の文書を表示
-roomStatus.members.forEach((member) => {
-	const sentence = member.sentence;
+roomStatus.members
+	.filter((member) => member.userId !== getUserId())
+	.forEach((member) => {
+		const sentence = member.sentence;
 
-	const input = document.createElement("input");
-	input.type = "radio";
-	input.name = "sentence-list";
-	input.required = true;
-	input.value = member.userId;
+		const input = document.createElement("input");
+		input.type = "radio";
+		input.name = "sentence-list";
+		input.required = true;
+		input.value = member.userId;
 
-	const span = document.createElement("span");
-	span.classList.add("card-text");
-	span.textContent = sentence;
+		const span = document.createElement("span");
+		span.classList.add("card-text");
+		span.textContent = sentence;
 
-	const label = document.createElement("label");
-	label.classList.add("card");
-	label.appendChild(input);
-	label.appendChild(span);
+		const label = document.createElement("label");
+		label.classList.add("card");
+		label.appendChild(input);
+		label.appendChild(span);
 
-	sentenceContainer.appendChild(label);
-});
+		sentenceContainer.appendChild(label);
+	});

@@ -1,6 +1,6 @@
 const BACKEND_URL = "http://localhost:8080";
 
-const getUserId = () => {
+export const getUserId = () => {
 	const value = localStorage.getItem("userId");
 	if (!value) {
 		window.alert("トップページからアクセスしてください。");
