@@ -1,4 +1,6 @@
-import { API, addRoomStatusListener } from "./api.js";
+import { API, addRoomStatusListener, checkValidAccess } from "./api.js";
+
+checkValidAccess();
 
 // HTML要素の取得
 const memberListItems = document.getElementById("member-list-items");

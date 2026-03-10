@@ -32,7 +32,8 @@ fieldset {
 
 body {
 	font-family: "Lexend", sans-serif;
-	background-color: var(--background-light);
+	/* 3D背景を見せるために透明にする。実際の背景色は bg-3d.js で設定 */
+	background-color: transparent;
 	color: var(--slate-900);
 	min-height: 100vh;
 	margin: 0;
@@ -50,11 +51,19 @@ body {
 
 /* Card */
 .card {
-	background-color: var(--white);
+	background-color: transparent;
 	padding: 1.5rem;
 	border-radius: 0.75rem;
 	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-	border: 1px solid var(--slate-200);
+	border: none;
+	position: relative;
+}
+
+.rough-border {
+	position: absolute;
+	top: 0;
+	left: 0;
+	pointer-events: none;
 }
 
 .section-header {
