@@ -41,10 +41,6 @@ public class RoomDao {
         jdbcTemplate.update("UPDATE rooms SET status = ? WHERE passphrase = ?", status, passphrase);
     }
 
-    public void updateRound(String passphrase, int round) {
-        jdbcTemplate.update("UPDATE rooms SET round = ? WHERE passphrase = ?", round, passphrase);
-    }
-
     public void updateStatusAndRound(String passphrase, String status, int round) {
         jdbcTemplate.update(
                 "UPDATE rooms SET status = ?, round = ? WHERE passphrase = ?",
