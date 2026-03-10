@@ -8,40 +8,20 @@ addRoomStatusListener((updatedStatus) => {
 	}
 });
 
-const target_text = document.getElementById("target");
-target_text.textContent = roomStatus.goal;
+const targetText = document.getElementById("target");
+targetText.textContent = roomStatus.goal;
 
-const words = document.getElementsByClassName("card");
-const input_word = document.getElementById("word-textarea");
+const wordForm = document.getElementById("word-form");
 const button = document.getElementById("submit-button");
 
-button.onclick = submitWord;
+wordForm.addEventListener("submit", (event) => {
+	event.preventDefault();
 
-function submitWord() {
-	if (input_word.value === "") {
-		alert("入力を行ってください");
-		return;
-	}
-	for (let i = 0; i < words.length; i++) {
-		const child = words[i].children[0];
-		if (child.className === "preword-0") {
-			child.className = "preword-1";
-			child.textContent = input_word.value;
-			input_word.value = "";
-			if (i < words.length - 1) return;
-		} else if (child.textContent === input_word.value) {
-			input_word.value = "";
-			alert("単語が被っています");
-			return;
-		}
-	}
-	submit();
-	return;
-}
+	const formData = new FormData(wordForm);
+	const inputWord = formData.get("word-input").trim();
 
-function submit() {
-	API.postWords(words[0].textContent);
+	API.postWords(inputWord);
 	button.disabled = true;
 	button.textContent = "全員の入力を待っています...";
-}
+});
 
