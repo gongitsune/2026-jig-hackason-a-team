@@ -9,7 +9,6 @@ addRoomStatusListener((updatedStatus) => {
 });
 
 const target_text = document.getElementById("target");
-console.log(roomStatus);
 target_text.textContent = roomStatus.goal;
 
 const words = document.getElementsByClassName("card");
@@ -42,5 +41,7 @@ function submitWord() {
 
 function submit() {
 	API.postWords(words[0].textContent);
+	button.disabled = true;
+	button.textContent = "全員の入力を待っています...";
 }
 
