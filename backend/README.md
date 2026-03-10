@@ -13,7 +13,7 @@ docker compose up -d
 ```
 
 - ヘルスチェック: http://localhost:8080/actuator/health
-- サンプル API: http://localhost:8080/api/health
+- サンプル API: http://localhost:8080/health
 
 ## ドキュメント
 
