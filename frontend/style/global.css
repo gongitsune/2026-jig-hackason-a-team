@@ -5,6 +5,10 @@
 	box-sizing: border-box;
 }
 
+fieldset {
+	border: none;
+}
+
 :root {
 	--primary: #368ce2;
 	--background-light: #f6f7f8;
@@ -109,4 +113,21 @@ ul {
 	background-color: var(--slate-300);
 	cursor: not-allowed;
 	box-shadow: none;
+}
+
+/* Text */
+.description {
+	font-size: 0.875rem;
+	color: var(--slate-500);
+	margin-bottom: 1rem;
+	margin-top: 2rem;
+}
+
+/* Input */
+input[type="text"] {
+	padding: 0.75rem 1rem;
+	border: 1px solid var(--slate-300);
+	border-radius: 0.5rem;
+	font-size: 1rem;
+	transition: border-color 0.2s;
 }

@@ -1,64 +1,89 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Member list */
+.member-list-items {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-top: 1rem;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  height: 100vh;
+.member-list-item {
+	display: flex;
+	justify-content: space-between;
+	gap: 0.5rem;
+	color: var(--slate-700);
+
+	.member-name {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.material-symbols-outlined {
+		font-size: 1.5rem;
+		color: var(--primary);
+	}
+
+	span {
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--slate-500);
+	}
 }
 
-div {
-  margin-bottom: 15px;
-  width: 300px;
-  display: flex;
-  flex-direction: column;
+/* Button area */
+.button-area {
+	margin-top: 2rem;
+	display: flex;
+	justify-content: flex-end;
 }
 
-label {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 5px;
+/* Before result */
+.before-result {
+	margin-top: 2rem;
 }
 
-input:hover{
-  border: 1px solid #99fffa;
-}
-input:focus{
-  border: 1px solid #37ffac;
-  border-color: #37ffac;
-}
+.result-sentences {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-top: 2rem;
 
-input {
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
+	li {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 
-button {
-  padding: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+		.user-info {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			color: var(--slate-500);
 
-button:hover {
-  background-color: #45a049;
-}
+			.material-symbols-outlined {
+				font-size: 1.5rem;
+			}
 
-button:active {
-  background-color: #388e3c;
+			span {
+				font-size: 0.875rem;
+				font-weight: 500;
+			}
+		}
+
+		.sentence-vote {
+			display: flex;
+			justify-content: space-between;
+			color: var(--slate-700);
+			font-size: 1.2rem;
+
+			.vote-count {
+				color: var(--slate-500);
+				font-size: 1rem;
+			}
+		}
+	}
+
+	li + li {
+		border-top: 1px solid var(--slate-200);
+		padding-top: 1rem;
+	}
 }

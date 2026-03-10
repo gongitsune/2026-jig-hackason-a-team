@@ -1,0 +1,20 @@
+/* Title */
+.title {
+	font-size: 3rem;
+	font-weight: 700;
+	color: var(--slate-800);
+	line-height: 1.25;
+	text-align: center;
+}
+
+/* Join form */
+.join-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-top: 4rem;
+
+	button {
+		margin-top: 1rem;
+	}
+}
