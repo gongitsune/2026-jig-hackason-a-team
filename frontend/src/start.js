@@ -39,15 +39,15 @@ addRoomStatusListener((roomStatus) => {
 		const listItem = document.createElement("li");
 		listItem.classList.add("user-info");
 		listItem.innerHTML = `
-    <div class="user-info">
-      <span class="material-symbols-outlined">account_circle</span>
-      <span class="user-name">${member.name}</span>
-    </div>
-    <div class="sentence-vote">
-      <span class="sentence-text">${result.sentence}</span>
-      <span class="vote-count">${result.voteCount}票</span>
-    </div>
-  `;
+      <div class="user-info">
+        <span class="material-symbols-outlined">account_circle</span>
+        <span class="user-name">${member.name}</span>
+      </div>
+      <div class="sentence-vote">
+        <span class="sentence-text">${result.sentence}</span>
+        <span class="vote-count">${result.voteCount}票</span>
+      </div>
+    `;
 
 		resultSentences.appendChild(listItem);
 	});
@@ -64,7 +64,7 @@ startButton.addEventListener("click", async () => {
 		await API.startGame();
 
 		startButton.disabled = true;
-		startButton.textContent = "ゲーム開始中...";
+		startButton.textContent = "全員のスタートを待っています...";
 	} catch (error) {
 		console.error("ゲームの開始に失敗しました:", error);
 		window.alert("ゲームの開始に失敗しました。もう一度試してください。");

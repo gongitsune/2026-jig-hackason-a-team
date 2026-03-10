@@ -90,7 +90,7 @@ submitButton.addEventListener("click", () => {
 
 	const buttonText = submitButton.innerText;
 	submitButton.disabled = true;
-	submitButton.innerText = "送信中...";
+	submitButton.innerText = "全員の提出を待っています...";
 	API.postSentence(sentence).catch((error) => {
 		console.error("Failed to post sentence:", error);
 		submitButton.innerText = buttonText;
