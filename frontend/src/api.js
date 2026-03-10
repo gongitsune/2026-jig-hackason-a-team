@@ -60,7 +60,7 @@ export const API = {
 	startGame: () => PUT(`/rooms/${getPassphrase()}`, { status: "WORD_INPUT" }),
 	postWords: (word) => POST(`/rooms/${getPassphrase()}/words`, { value: word }),
 	postSentence: (sentence) =>
-		POST(`/rooms/${getPassphrase()}/sentences/`, { value: sentence }),
+		POST(`/rooms/${getPassphrase()}/sentences`, { value: sentence }),
 	postVote: (userId) =>
 		POST(`/rooms/${getPassphrase()}/votes`, { targetUserId: userId }),
 	getRoomStatus: () =>
