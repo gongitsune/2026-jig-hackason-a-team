@@ -21,7 +21,6 @@ public class VoteController {
     private static final String USER_ID_HEADER = "X-User-Id";
     private static final String STATUS_VOTE_INPUT = "VOTE_INPUT";
     private static final String STATUS_WAITING = "WAITING";
-    private static final int MAX_ROUND = 3;
 
     private final VoteDao voteDao;
     private final SentenceDao sentenceDao;
@@ -83,8 +82,7 @@ public class VoteController {
         int voteCount = voteDao.countByRoomPassphraseAndSentenceRound(passphrase, round);
         int userCount = userDao.countByRoomPassphrase(passphrase);
         if (voteCount >= userCount) {
-            int nextRound = round >= MAX_ROUND ? 1 : round + 1;
-            roomDao.updateStatusAndRound(passphrase, STATUS_WAITING, nextRound);
+            roomDao.updateStatusAndRound(passphrase, STATUS_WAITING, round + 1);
         }
         return ResponseEntity.ok().build();
     }
