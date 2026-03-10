@@ -70,7 +70,7 @@ const updateContents = (roomStatus) => {
 
 	// ステータスを見て次の画面に遷移
 	if (roomStatus.status === "WORD_INPUT") {
-		window.location.href = "/word.html";
+		window.location.href = "./word.html";
 	}
 };
 
@@ -92,7 +92,5 @@ startButton.addEventListener("click", async () => {
 
 //index.htmlに戻す処理
 goBackButton.addEventListener("click", async () => {
-	location.href="/index.html";
+	location.href = "./index.html";
 });
-
-

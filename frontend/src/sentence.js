@@ -21,7 +21,7 @@ const roomStatus = await API.getRoomStatus();
 // ルームステータスを監視
 addRoomStatusListener((updatedStatus) => {
 	if (updatedStatus.status === "VOTE_INPUT") {
-		window.location.href = "/vote.html";
+		window.location.href = "./vote.html";
 	}
 });
 

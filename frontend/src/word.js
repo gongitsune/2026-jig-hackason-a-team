@@ -4,7 +4,7 @@ const roomStatus = await API.getRoomStatus();
 
 addRoomStatusListener((updatedStatus) => {
 	if (updatedStatus.status === "SENTENCE_INPUT") {
-		window.location.href = "/sentence.html";
+		window.location.href = "./sentence.html";
 	}
 });
 
@@ -24,4 +24,3 @@ wordForm.addEventListener("submit", (event) => {
 	button.disabled = true;
 	button.textContent = "全員の入力を待っています...";
 });
-
