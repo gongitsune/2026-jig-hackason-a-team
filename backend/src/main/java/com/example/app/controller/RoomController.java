@@ -2,6 +2,7 @@ package com.example.app.controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -153,13 +154,18 @@ public class RoomController {
         String roomStatus = room.status();
         String roomGoal = room.goal();
 
-        // 配布された単語を取得
-        List<String> distributedWords = jdbcTemplate.queryForList(
+        // 配布された単語を取得（DB はカンマ区切りで保存、クライアントは単語の配列を期待）
+        List<String> distributedWordsRaw = jdbcTemplate.queryForList(
                 "SELECT value FROM distributed_words WHERE room_passphrase = ? AND round = ?",
                 String.class,
                 passphrase,
                 currentRound
         );
+        List<String> distributedWords = distributedWordsRaw.stream()
+                .flatMap(s -> Arrays.stream(s.split(",")))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
 
         // 参加者を取得
         List<MemberResponse> members = jdbcTemplate.query(
