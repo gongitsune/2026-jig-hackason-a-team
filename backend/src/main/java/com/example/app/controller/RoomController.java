@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,6 +24,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 @RestController
 @RequestMapping("/rooms")
 public class RoomController {
+
+    private static final List<String> DEFAULT_GOALS = List.of(
+            "一番食べたくない食べ物",
+            "最高の文書を作る",
+            "世界で一番欲しいもの",
+            "最も驚いたこと"
+    );
 
     private final JdbcTemplate jdbcTemplate;
     private final RoomDao roomDao;
@@ -65,7 +73,8 @@ public class RoomController {
             return ResponseEntity.ok().build();
         }
 
-        roomDao.insert(new Room(passphrase, "WAITING", 1, ""));
+        String goal = DEFAULT_GOALS.get(ThreadLocalRandom.current().nextInt(DEFAULT_GOALS.size()));
+        roomDao.insert(new Room(passphrase, "WAITING", 1, goal));
         addOrUpdateUser(userId, passphrase, userName);
         return ResponseEntity.ok().build();
     }
