@@ -1,19 +1,21 @@
 package com.example.app.controller;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.swing.tree.RowMapper;
+import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.*;
 import com.example.app.domain.Room;
 import com.example.app.domain.User;
 import com.example.app.dto.MemberResponse;
 import com.example.app.dto.RoomResponse;
 import com.example.app.dto.SentenceResult;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.web.bind.annotation.*;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
 
 @RestController
 @RequestMapping("/rooms")
@@ -38,7 +40,7 @@ RoomController {
     ) {
         // 既にゲーム中の部屋がある場合は 400 を返す
         var count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM rooms WHERE passphrase = ? AND status = 'IN_GAME'",
+                "SELECT COUNT(*) FROM rooms WHERE passphrase = ? AND status != 'WAITING'",
                 Integer.class,
                 passphrase
         );
