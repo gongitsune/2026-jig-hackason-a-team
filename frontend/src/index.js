@@ -50,6 +50,5 @@ passphraseInput.addEventListener("input", () => {
 joinButton.disabled = true; // 初期状態では無効
 addRoomStatusListener((roomStatus) => {
 	const isGameStarted = roomStatus.status === "WAITING";
-	console.log("Room status updated:", roomStatus);
 	joinButton.disabled = !isGameStarted;
 });

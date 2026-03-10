@@ -22,8 +22,18 @@ const mockStatus = {
 			round: 1,
 			goal: "最高の文書を作る",
 			results: [
-				{ userId: "user1", name: "Alice", sentence: "アバダケダブラ", voteCount: 3 },
-				{ userId: "user2", name: "Bob", sentence: "旬の成果がお買い得", voteCount: 5 },
+				{
+					userId: "user1",
+					name: "Alice",
+					sentence: "アバダケダブラ",
+					voteCount: 3,
+				},
+				{
+					userId: "user2",
+					name: "Bob",
+					sentence: "旬の成果がお買い得",
+					voteCount: 5,
+				},
 			],
 		},
 	],
@@ -38,7 +48,6 @@ setInterval(async () => {
 			return;
 		}
 
-		console.log("Fetching room status...");
 		window.roomStatus = await API.getRoomStatus();
 		window.dispatchEvent(
 			new CustomEvent("roomStatusUpdate", { detail: window.roomStatus }),
