@@ -55,10 +55,8 @@ async function PUT(endpoint, data) {
 
 // API関数のエクスポート
 export const API = {
-	// users
-	postName: (name) => POST("/users", { name }),
 	// rooms
-	joinRoom: () => POST(`/rooms/${getPassphrase()}`, {}),
+	joinRoom: (userName) => POST(`/rooms/${getPassphrase()}`, { userName }),
 	startGame: () => PUT(`/rooms/${getPassphrase()}`, { status: "WORD_INPUT" }),
 	postWords: (word) => POST(`/rooms/${getPassphrase()}/words`, { value: word }),
 	postSentence: (sentence) =>
