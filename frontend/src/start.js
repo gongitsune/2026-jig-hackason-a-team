@@ -6,21 +6,36 @@ const startButton = document.getElementById("start-button");
 const targetGoal = document.getElementById("target-goal");
 const resultSentences = document.getElementById("result-sentences");
 const goBackButton = document.getElementById("back-button");
+const beforeResultSection = document.getElementById("before-result");
 
 const updateContents = (roomStatus) => {
-	// TODO: 前回の目標の表示
-	targetGoal.textContent = roomStatus.goal;
+	// 目標の表示（直近の pastResults があればその goal、なければ room の goal）
+	const pastResults = roomStatus.pastResults || [];
+	const lastRound = pastResults[pastResults.length - 1];
+
+	// 過去結果がないときはセクションを非表示
+	beforeResultSection.hidden = !lastRound;
+	targetGoal.textContent = lastRound?.goal || roomStatus.goal || "";
+
+	// pastResults から各メンバーの合計得点を計算
+	const pointsByUserId = {};
+	roomStatus.members.forEach((m) => {
+		pointsByUserId[m.userId] = 0;
+	});
+	pastResults.forEach((pastRound) => {
+		pastRound.results.forEach((r) => {
+			if (pointsByUserId[r.userId] !== undefined) {
+				pointsByUserId[r.userId] += r.voteCount;
+			}
+		});
+	});
 
 	// メンバーリストの更新
 	memberListItems.innerHTML = ""; // 一旦リセット
 	roomStatus.members.forEach((member) => {
 		const listItem = document.createElement("li");
 		listItem.classList.add("member-list-item");
-
-		const point = member.beforeResult.reduce(
-			(sum, result) => sum + result.voteCount,
-			0,
-		);
+		const point = pointsByUserId[member.userId] ?? 0;
 		listItem.innerHTML = `
     <div class="member-name">
       <span class="material-symbols-outlined">account_circle</span>
@@ -32,19 +47,16 @@ const updateContents = (roomStatus) => {
 		memberListItems.appendChild(listItem);
 	});
 
-	// 前回投票結果の表示
+	// 過去ラウンドの投票結果の表示（直近ラウンドを表示）
 	resultSentences.innerHTML = ""; // 一旦リセット
-	roomStatus.members
-		.filter((member) => member.beforeResult.length > 0)
-		.forEach((member) => {
-			const result = member.beforeResult[0];
-
+	if (lastRound) {
+		lastRound.results.forEach((result) => {
 			const listItem = document.createElement("li");
 			listItem.classList.add("user-info");
 			listItem.innerHTML = `
       <div class="user-info">
         <span class="material-symbols-outlined">account_circle</span>
-        <span class="user-name">${member.name}</span>
+        <span class="user-name">${result.name}</span>
       </div>
       <div class="sentence-vote">
         <span class="sentence-text">${result.sentence}</span>
@@ -54,6 +66,7 @@ const updateContents = (roomStatus) => {
 
 			resultSentences.appendChild(listItem);
 		});
+	}
 
 	// ステータスを見て次の画面に遷移
 	if (roomStatus.status === "WORD_INPUT") {

@@ -4,28 +4,8 @@ const mockStatus = {
 	status: "WAITING",
 	goal: "最高の文書を作る",
 	members: [
-		{
-			userId: "user1",
-			name: "Alice",
-			beforeResult: [
-				{
-					sentence: "アバダケダブラ",
-					voteCount: 3,
-				},
-			],
-			sentence: "今回の成果はイマイチ",
-		},
-		{
-			userId: "user2",
-			name: "Bob",
-			beforeResult: [
-				{
-					sentence: "旬の成果がお買い得",
-					voteCount: 5,
-				},
-			],
-			sentence: "今回の成果はまあまあ",
-		},
+		{ userId: "user1", name: "Alice", sentence: null },
+		{ userId: "user2", name: "Bob", sentence: null },
 	],
 	distributedWords: [
 		"猫",
@@ -36,6 +16,16 @@ const mockStatus = {
 		"最高",
 		"文書",
 		"作る",
+	],
+	pastResults: [
+		{
+			round: 1,
+			goal: "最高の文書を作る",
+			results: [
+				{ userId: "user1", name: "Alice", sentence: "アバダケダブラ", voteCount: 3 },
+				{ userId: "user2", name: "Bob", sentence: "旬の成果がお買い得", voteCount: 5 },
+			],
+		},
 	],
 };
 
