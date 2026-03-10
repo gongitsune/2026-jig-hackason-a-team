@@ -33,6 +33,7 @@ joinForm.addEventListener("submit", async (event) => {
 		// 参加成功後、ゲーム画面に遷移
 		window.location.href = "/start.html";
 	} catch (error) {
+		console.error("Failed to join room:", error);
 		// TODO: UIとして表示してあげたほうが親切かも
 		window.alert("参加に失敗しました。時間をおいてもう一度試してください。");
 	}

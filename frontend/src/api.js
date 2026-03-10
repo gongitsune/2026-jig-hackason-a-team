@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:1234";
+const BACKEND_URL = "http://localhost:8080";
 
 const getUserId = () => {
 	const value = localStorage.getItem("userId");
@@ -26,7 +26,7 @@ async function GET(endpoint) {
 			"X-User-Id": getUserId(),
 		},
 	});
-	return response.json();
+	return response;
 }
 
 async function POST(endpoint, data) {
@@ -38,7 +38,7 @@ async function POST(endpoint, data) {
 		},
 		body: JSON.stringify(data),
 	});
-	return response.json();
+	return response;
 }
 
 async function PUT(endpoint, data) {
@@ -50,7 +50,7 @@ async function PUT(endpoint, data) {
 		},
 		body: JSON.stringify(data),
 	});
-	return response.json();
+	return response;
 }
 
 // API関数のエクスポート
@@ -63,7 +63,8 @@ export const API = {
 		POST(`/rooms/${getPassphrase()}/sentences/`, { value: sentence }),
 	postVote: (userId) =>
 		POST(`/rooms/${getPassphrase()}/votes`, { targetUserId: userId }),
-	getRoomStatus: () => GET(`/rooms/${getPassphrase()}`),
+	getRoomStatus: () =>
+		GET(`/rooms/${getPassphrase()}`).then((res) => res.json()),
 };
 
 // ルームステータス
