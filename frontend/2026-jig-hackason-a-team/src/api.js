@@ -4,8 +4,6 @@ export const getUserId = () => {
 	const value = localStorage.getItem("userId");
 	if (!value) {
 		window.alert("トップページからアクセスしてください。");
-		// TODO: テスト用のユーザIDを生成して保存する。実装後は削除する。
-		localStorage.setItem("userId", "test-user-id");
 	}
 	return value;
 };
@@ -13,10 +11,17 @@ const getPassphrase = () => {
 	const value = localStorage.getItem("passphrase");
 	if (!value) {
 		window.alert("トップページからアクセスしてください。");
-		// TODO: テスト用のパスフレーズを生成して保存する。実装後は削除する。
-		localStorage.setItem("passphrase", "test-passphrase");
 	}
 	return value;
+};
+
+export const checkValidAccess = () => {
+	const userId = localStorage.getItem("userId");
+	const passphrase = localStorage.getItem("passphrase");
+	if (!userId || !passphrase) {
+		window.alert("トップページからアクセスしてください。");
+		window.location.href = "./index.html";
+	}
 };
 
 async function GET(endpoint) {

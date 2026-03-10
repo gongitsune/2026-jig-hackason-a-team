@@ -1,4 +1,11 @@
-import { API, addRoomStatusListener, getUserId } from "./api.js";
+import {
+	API,
+	addRoomStatusListener,
+	checkValidAccess,
+	getUserId,
+} from "./api.js";
+
+checkValidAccess();
 
 // HTML要素を取得
 const voteForm = document.getElementById("vote-form");

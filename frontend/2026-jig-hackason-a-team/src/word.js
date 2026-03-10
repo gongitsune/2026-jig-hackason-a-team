@@ -1,4 +1,6 @@
-import { API, addRoomStatusListener } from "./api.js";
+import { API, addRoomStatusListener, checkValidAccess } from "./api.js";
+
+checkValidAccess();
 
 const roomStatus = await API.getRoomStatus();
 
