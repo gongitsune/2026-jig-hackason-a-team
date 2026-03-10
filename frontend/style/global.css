@@ -5,6 +5,10 @@
 	box-sizing: border-box;
 }
 
+fieldset {
+	border: none;
+}
+
 :root {
 	--primary: #368ce2;
 	--background-light: #f6f7f8;
@@ -109,4 +113,12 @@ ul {
 	background-color: var(--slate-300);
 	cursor: not-allowed;
 	box-shadow: none;
+}
+
+/* Text */
+.description {
+	font-size: 0.875rem;
+	color: var(--slate-500);
+	margin-bottom: 1rem;
+	margin-top: 2rem;
 }

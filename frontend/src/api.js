@@ -50,14 +50,14 @@ async function PUT(endpoint, data) {
 // API関数のエクスポート
 export const API = {
 	// users
-	postName: (name) => POST(`users/${name}`, {}),
+	postName: (name) => POST("users", { name }),
 	// rooms
 	joinRoom: () => POST(`rooms/${passphrase}`, {}),
-	startGame: () => PUT(`rooms/${passphrase}`, { status: "STARTING" }),
-	getRoomStatus: () => GET(`rooms/${passphrase}`),
-	// words
-	postWords: (word) => POST(`words/${passphrase}`, { value: word }),
-	// sentences
+	startGame: () => PUT(`rooms/${passphrase}`, { status: "WORD_INPUT" }),
+	postWords: (word) => POST(`rooms/${passphrase}/words`, { value: word }),
 	postSentence: (sentence) =>
-		POST(`sentences/${passphrase}`, { value: sentence }),
+		POST(`rooms/${passphrase}/sentences/`, { value: sentence }),
+	postVote: (userId) =>
+		POST(`rooms/${passphrase}/votes`, { targetUserId: userId }),
+	getRoomStatus: () => GET(`rooms/${passphrase}`),
 };

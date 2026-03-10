@@ -22,31 +22,29 @@
   </head>
   <body>
     <div class="container">
-      <div class="game-area">
-        <!-- Target Goal -->
-        <section class="card">
-          <div class="section-header">
-            <span class="material-symbols-outlined">thumb_up</span>
-            <h2 class="section-title">投票</h2>
+      <!-- Target Goal -->
+      <section class="card">
+        <div class="section-header">
+          <span class="material-symbols-outlined">thumb_up</span>
+          <h2 class="section-title">投票</h2>
+        </div>
+        <p class="card-large-text">一番食べたくない食べ物</p>
+      </section>
+
+      <!-- Sentences -->
+      <form id="vote-form">
+        <fieldset>
+          <legend class="description">
+            一番目標と近いと思うものを選んでください。
+          </legend>
+
+          <div class="sentence-container" id="sentence-container"></div>
+
+          <div class="submit-area">
+            <button class="submit-button" type="submit">投票</button>
           </div>
-          <p class="card-large-text">一番食べたくない食べ物</p>
-        </section>
-
-        <!-- Sentences -->
-        <form id="vote-form">
-          <fieldset>
-            <legend class="list-description">
-              一番目標と近いと思うものを選んでください。
-            </legend>
-
-            <div class="sentence-container" id="sentence-container"></div>
-
-            <div class="submit-area">
-              <button class="submit-button" type="submit">投票</button>
-            </div>
-          </fieldset>
-        </form>
-      </div>
+        </fieldset>
+      </form>
     </div>
   </body>
 </html>
