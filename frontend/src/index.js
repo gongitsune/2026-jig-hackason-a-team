@@ -20,7 +20,7 @@ joinForm.addEventListener("submit", async (event) => {
 
 	// フォームデータを取得
 	const formData = new FormData(joinForm);
-	const name = formData.get("name");
+	const name = formData.get("username");
 	const passphrase = formData.get("passphrase");
 
 	// パスフレーズをローカルストレージに保存
