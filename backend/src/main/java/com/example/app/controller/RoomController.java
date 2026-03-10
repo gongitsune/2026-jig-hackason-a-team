@@ -1,9 +1,11 @@
 package com.example.app.controller;
 
 import com.example.app.domain.Room;
+import com.example.app.domain.User;
 import com.example.app.dto.MemberResponse;
 import com.example.app.dto.RoomResponse;
 import com.example.app.dto.SentenceResult;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,13 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/rooms")
-public class RoomController {
+public class
+RoomController {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,7 +32,9 @@ public class RoomController {
      */
     @PostMapping("/{passphrase}")
     public ResponseEntity<Void> post(
-            @PathVariable String passphrase
+            @RequestHeader Map<String, String> headers,
+            @PathVariable String passphrase,
+            @RequestBody JsonNode data
     ) {
         // 既にゲーム中の部屋がある場合は 400 を返す
         var count = jdbcTemplate.queryForObject(
@@ -53,6 +56,19 @@ public class RoomController {
                 room.status(),
                 room.round(),
                 room.goal() // Add goal value
+        );
+
+        var user = new User(
+                headers.get("x-user-id"),
+                Optional.of(passphrase),
+                data.get("userName").asText()
+        );
+
+        jdbcTemplate.update(
+                "INSERT INTO users (id, room_passphrase, name) VALUES (?, ?, ?)",
+                user.id(),
+                user.roomPassphrase().orElse(null),
+                user.name()
         );
 
         return ResponseEntity.ok().build();
