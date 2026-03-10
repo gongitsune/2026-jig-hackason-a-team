@@ -2,6 +2,10 @@ import roughjs from "https://cdn.jsdelivr.net/npm/roughjs@4.6.6/+esm";
 
 // カード要素
 const updateCardSvg = (svg, card) => {
+	card.style.position = "relative";
+	card.style.border = "none";
+	card.style.background = "transparent";
+
 	svg.setAttribute("width", card.offsetWidth);
 	svg.setAttribute("height", card.offsetHeight);
 	svg.style.position = "absolute";
