@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: './frontend'
+          path: './frontend/2026-jig-hackason-a-team'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
