@@ -28,8 +28,7 @@ joinForm.addEventListener("submit", async (event) => {
 
 	// サーバーに参加リクエストを送信
 	try {
-		await API.postName(name);
-		await API.joinRoom();
+		await API.joinRoom(name);
 
 		// 参加成功後、ゲーム画面に遷移
 		window.location.href = "/start.html";

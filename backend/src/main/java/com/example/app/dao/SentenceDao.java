@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class SentenceDao {
@@ -67,5 +68,13 @@ public class SentenceDao {
                 Integer.class, roomPassphrase, userId, round
         );
         return count != null && count > 0;
+    }
+
+    public Optional<Sentence> findByRoomPassphraseAndUserIdAndRound(String roomPassphrase, String userId, int round) {
+        List<Sentence> results = jdbcTemplate.query(
+                "SELECT id, room_passphrase, user_id, round, value FROM sentences WHERE room_passphrase = ? AND user_id = ? AND round = ?",
+                ROW_MAPPER, roomPassphrase, userId, round
+        );
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.getFirst());
     }
 }

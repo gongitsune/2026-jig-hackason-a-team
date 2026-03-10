@@ -1,12 +1,23 @@
-import { API, getRoomStatus } from "./api.js";
+import { API, addRoomStatusListener, getRoomStatus } from "./api.js";
 
 // HTML要素を取得
 const voteForm = document.getElementById("vote-form");
 const sentenceContainer = document.getElementById("sentence-container");
 const goalElement = document.getElementById("target-goal");
+const submitButton = document.getElementById("submit-button");
+
+// ルームステータスを取得
+const roomStatus = await API.getRoomStatus();
+
+// ルームステータスを監視
+addRoomStatusListener((updatedStatus) => {
+	if (updatedStatus.status === "WAITING") {
+		window.location.href = "/start.html";
+	}
+});
 
 // 目標の表示
-goalElement.textContent = getRoomStatus().goal;
+goalElement.textContent = roomStatus.goal;
 
 // フォームの送信イベントを処理
 voteForm.addEventListener("submit", async (event) => {
@@ -21,11 +32,14 @@ voteForm.addEventListener("submit", async (event) => {
 		return;
 	}
 
+	submitButton.disabled = true;
+	submitButton.textContent = "全員の投票を待っています...";
+
 	await API.postVote(chooseUserId);
 });
 
 // 全員分の文書を表示
-getRoomStatus().members.forEach((member) => {
+roomStatus.members.forEach((member) => {
 	const sentence = member.sentence;
 
 	const input = document.createElement("input");
