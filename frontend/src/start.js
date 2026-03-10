@@ -5,6 +5,7 @@ const memberListItems = document.getElementById("member-list-items");
 const startButton = document.getElementById("start-button");
 const targetGoal = document.getElementById("target-goal");
 const resultSentences = document.getElementById("result-sentences");
+const goBackButton = document.getElementById("back-button");
 
 const updateContents = (roomStatus) => {
 	// TODO: 前回の目標の表示
@@ -75,3 +76,10 @@ startButton.addEventListener("click", async () => {
 		window.alert("ゲームの開始に失敗しました。もう一度試してください。");
 	}
 });
+
+//index.htmlに戻す処理
+goBackButton.addEventListener("click", async () => {
+	location.href="/index.html";
+});
+
+
