@@ -8,7 +8,7 @@ CREATE TABLE rooms (
 -- users: id PK, room_passphrase FK, name
 CREATE TABLE users (
     id VARCHAR(255) PRIMARY KEY,
-    room_passphrase VARCHAR(255) NOT NULL REFERENCES rooms(passphrase),
+    room_passphrase VARCHAR(255) REFERENCES rooms(passphrase),
     name VARCHAR(255) NOT NULL
 );
 
