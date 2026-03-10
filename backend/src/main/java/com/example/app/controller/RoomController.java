@@ -17,8 +17,9 @@ import com.example.app.dao.UserDao;
 import com.example.app.domain.Room;
 import com.example.app.domain.User;
 import com.example.app.dto.MemberResponse;
+import com.example.app.dto.PastRoundResult;
 import com.example.app.dto.RoomResponse;
-import com.example.app.dto.SentenceResult;
+import com.example.app.dto.SentenceResultWithUser;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
@@ -120,11 +121,18 @@ public class RoomController {
 
         String currentStatus = room.status();
         if ("WAITING".equals(currentStatus)) {
-            // ゲーム開始: WAITING → WORD_INPUT（round の加算は Vote API で行う）
+            // ゲーム開始: WAITING → WORD_INPUT
+            // ラウンドごとの goal を保存（過去結果表示用）
+            int round = room.round();
+            String goal = DEFAULT_GOALS.get(ThreadLocalRandom.current().nextInt(DEFAULT_GOALS.size()));
             jdbcTemplate.update(
-                    "UPDATE rooms SET status = ? WHERE passphrase = ?",
-                    "WORD_INPUT",
-                    passphrase
+                    "INSERT INTO round_goals (room_passphrase, round, goal) VALUES (?, ?, ?) " +
+                            "ON CONFLICT (room_passphrase, round) DO UPDATE SET goal = EXCLUDED.goal",
+                    passphrase, round, goal
+            );
+            jdbcTemplate.update(
+                    "UPDATE rooms SET status = ?, goal = ? WHERE passphrase = ?",
+                    "WORD_INPUT", goal, passphrase
             );
         }
         // 既に WORD_INPUT 以降なら 200 を返すだけ（冪等）
@@ -155,6 +163,7 @@ public class RoomController {
                     "WAITING",
                     Collections.emptyList(),
                     "",
+                    Collections.emptyList(),
                     Collections.emptyList()
             ));
         }
@@ -185,7 +194,6 @@ public class RoomController {
                     String userId = rs.getString("id");
                     String name = rs.getString("name");
                     String sentence = null;
-                    List<SentenceResult> beforeResult = Collections.emptyList();
 
                     if (roomStatus.equals("SENTENCE_INPUT") || roomStatus.equals("VOTE_INPUT")) {
                         // 現在ラウンドのユーザー文章を取得
@@ -195,34 +203,77 @@ public class RoomController {
                                 passphrase, userId, currentRound
                         );
                     }
-
-                    if (roomStatus.equals("VOTE_INPUT") && currentRound > 1) {
-                        // 前ラウンドの文章と得票数を取得
-                        int previousRound = currentRound - 1;
-                        beforeResult = jdbcTemplate.query(
-                            "SELECT s.value, COUNT(v.id) as vote_count " +
-                                    "FROM sentences s LEFT JOIN votes v ON s.id = v.sentence_id " +
-                                    "WHERE s.room_passphrase = ? AND s.round = ? " +
-                                    "GROUP BY s.id, s.value",
-                            (rsSentenceResult, rowNumSentenceResult) -> new SentenceResult(
-                                    rsSentenceResult.getString("value"),
-                                    rsSentenceResult.getInt("vote_count")
-                            ),
-                            passphrase, previousRound
-                        );
-                    }
-                    return new MemberResponse(userId, name, sentence, beforeResult);
+                    return new MemberResponse(userId, name, sentence);
                 }
             },
             passphrase
         );
 
+        // 過去ラウンドの結果を取得（WAITING時にstart画面で表示）
+        List<PastRoundResult> pastResults = buildPastResults(passphrase, currentRound, roomGoal);
+
         return ResponseEntity.ok(new RoomResponse(
             roomStatus,
             members,
             roomGoal,
-            distributedWords
+            distributedWords,
+            pastResults
         ));
+    }
+
+    /**
+     * 過去ラウンドの結果を構築する。
+     * - currentRound > 1 のとき: past rounds = 1, 2, ..., currentRound - 1
+     * - currentRound == 1 のとき: 前ゲーム完了時は過去 rounds = 1, 2, 3
+     */
+    private List<PastRoundResult> buildPastResults(String passphrase, int currentRound, String fallbackGoal) {
+        List<Integer> pastRoundNumbers;
+        if (currentRound > 1) {
+            pastRoundNumbers = new java.util.ArrayList<>();
+            for (int r = 1; r < currentRound; r++) {
+                pastRoundNumbers.add(r);
+            }
+        } else {
+            // currentRound == 1: 前ゲーム完了時は rounds 1,2,3 のデータがある
+            List<Integer> roundsWithData = jdbcTemplate.queryForList(
+                    "SELECT DISTINCT round FROM sentences WHERE room_passphrase = ? ORDER BY round",
+                    Integer.class,
+                    passphrase
+            );
+            pastRoundNumbers = roundsWithData;
+        }
+
+        List<PastRoundResult> result = new java.util.ArrayList<>();
+        for (int round : pastRoundNumbers) {
+            List<SentenceResultWithUser> results = jdbcTemplate.query(
+                    "SELECT s.user_id, u.name, s.value, COUNT(v.id) as vote_count " +
+                            "FROM sentences s " +
+                            "JOIN users u ON s.user_id = u.id AND u.room_passphrase = s.room_passphrase " +
+                            "LEFT JOIN votes v ON v.sentence_id = s.id " +
+                            "WHERE s.room_passphrase = ? AND s.round = ? " +
+                            "GROUP BY s.id, s.user_id, u.name, s.value",
+                    (rs, rowNum) -> new SentenceResultWithUser(
+                            rs.getString("user_id"),
+                            rs.getString("name"),
+                            rs.getString("value"),
+                            rs.getInt("vote_count")
+                    ),
+                    passphrase,
+                    round
+            );
+            if (!results.isEmpty()) {
+                String goal = jdbcTemplate.query(
+                        "SELECT goal FROM round_goals WHERE room_passphrase = ? AND round = ?",
+                        rs -> rs.next() ? rs.getString("goal") : null,
+                        passphrase, round
+                );
+                if (goal == null || goal.isBlank()) {
+                    goal = fallbackGoal != null ? fallbackGoal : "";
+                }
+                result.add(new PastRoundResult(round, goal, results));
+            }
+        }
+        return result;
     }
 }
         
