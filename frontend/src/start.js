@@ -1,42 +1,16 @@
+import { API, getRoomStatus } from "./api";
+
 // HTML要素の取得
 const memberListItems = document.getElementById("member-list-items");
 const startButton = document.getElementById("start-button");
 const targetGoal = document.getElementById("target-goal");
 const resultSentences = document.getElementById("result-sentences");
 
-// TODO: APIから取得できる情報のモック
-const roomInfo = {
-	status: "WAITING",
-	goal: "最高の文書を作る",
-	members: [
-		{
-			userId: "user1",
-			name: "Alice",
-			beforeResult: [
-				{
-					sentence: "アバダケダブラ",
-					voteCount: 3,
-				},
-			],
-		},
-		{
-			userId: "user2",
-			name: "Bob",
-			beforeResult: [
-				{
-					sentence: "旬の成果がお買い得",
-					voteCount: 5,
-				},
-			],
-		},
-	],
-};
-
 // 目標の表示
-targetGoal.textContent = roomInfo.goal;
+targetGoal.textContent = getRoomStatus().goal;
 
 // メンバーリストの表示
-roomInfo.members.forEach((member) => {
+getRoomStatus().members.forEach((member) => {
 	const listItem = document.createElement("li");
 	listItem.classList.add("member-list-item");
 
@@ -56,7 +30,7 @@ roomInfo.members.forEach((member) => {
 });
 
 // 前回投票結果の表示
-roomInfo.members.forEach((member) => {
+getRoomStatus().members.forEach((member) => {
 	const result = member.beforeResult[0];
 
 	const listItem = document.createElement("li");
@@ -73,4 +47,14 @@ roomInfo.members.forEach((member) => {
   `;
 
 	resultSentences.appendChild(listItem);
+});
+
+// スタートボタンの処理
+startButton.addEventListener("click", async () => {
+	try {
+		await API.startGame();
+	} catch (error) {
+		console.error("ゲームの開始に失敗しました:", error);
+		window.alert("ゲームの開始に失敗しました。もう一度試してください。");
+	}
 });

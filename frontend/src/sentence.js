@@ -1,12 +1,15 @@
-import { API } from "./api";
-
-const wordList = ["猫", "犬", "鳥", "魚", "うさぎ", "カメ", "ハムスター"];
+import { API, getRoomStatus } from "./api";
 
 // 定数
 const MAX_CHAR_COUNT = 30;
 const MIN_WORD_COUNT = 3;
 
+const getWordList = () => getRoomStatus().distributedWords;
+const getGoal = () => getRoomStatus().goal;
+
 // HTML要素の取得
+const goalElement = document.getElementById("target-goal");
+
 const charCounter = document.getElementById("char-counter");
 const sentenceInput = document.getElementById("story-textarea");
 
@@ -15,9 +18,12 @@ const wordContainer = document.getElementById("word-container");
 
 const submitButton = document.getElementById("submit-button");
 
+// 目標の表示
+goalElement.innerText = getGoal();
+
 // 単語表示
 wordSectionTitle.innerText = `単語リスト (${MIN_WORD_COUNT}つ以上含めてください)`;
-const wordButtons = wordList.map((word) => {
+const wordButtons = getWordList().map((word) => {
 	const wordElement = document.createElement("button");
 	wordElement.type = "button";
 	wordElement.className = "word-button";
@@ -50,7 +56,7 @@ const onInput = () => {
 	});
 
 	// 送信ボタンの有効/無効を切り替える
-	const wordCount = wordList.filter((word) =>
+	const wordCount = getWordList().filter((word) =>
 		sentenceInput.value.includes(word),
 	).length;
 	submitButton.disabled = wordCount < MIN_WORD_COUNT;

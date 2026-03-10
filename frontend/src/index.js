@@ -9,6 +9,9 @@ if (!localStorage.getItem("userId")) {
 	localStorage.setItem("userId", userId);
 }
 
+// パスフレーズを消す
+localStorage.removeItem("passphrase");
+
 // フォームの送信イベントを処理
 joinForm.addEventListener("submit", async (event) => {
 	event.preventDefault(); // フォームのデフォルトの送信動作を防止
@@ -26,6 +29,6 @@ joinForm.addEventListener("submit", async (event) => {
 		await API.postName(name);
 	} catch (error) {
 		// TODO: UIとして表示してあげたほうが親切かも
-		window.alert("参加に失敗しました。この部屋は現在ゲーム中です。");
+		window.alert("参加に失敗しました。時間をおいてもう一度試してください。");
 	}
 });
