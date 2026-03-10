@@ -53,4 +53,14 @@ public class VoteDao {
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, roomPassphrase, round);
         return count != null ? count : 0;
     }
+
+    public boolean existsByRoomPassphraseAndUserIdAndRound(String roomPassphrase, String userId, int round) {
+        String sql = """
+                SELECT COUNT(*) FROM votes v
+                JOIN sentences s ON v.sentence_id = s.id
+                WHERE v.room_passphrase = ? AND v.user_id = ? AND s.round = ?
+                """;
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, roomPassphrase, userId, round);
+        return count != null && count > 0;
+    }
 }
