@@ -47,15 +47,15 @@ RoomController {
             return ResponseEntity.badRequest().build();
         }
 
-        var room = new Room(passphrase, "WAITING", 1, ""); // Add empty string for goal
+        var room = new Room(passphrase, "WAITING", 1, ""); // goal を空文字で初期化
 
         // 部屋作成
         jdbcTemplate.update(
-                "INSERT INTO rooms (passphrase, status, round, goal) VALUES (?, ?, ?, ?)", // Add goal column
+                "INSERT INTO rooms (passphrase, status, round, goal) VALUES (?, ?, ?, ?)",
                 room.passphrase(),
                 room.status(),
                 room.round(),
-                room.goal() // Add goal value
+                room.goal()
         );
 
         var user = new User(
@@ -83,14 +83,14 @@ RoomController {
             @PathVariable String passphrase,
             @RequestBody Map<String, String> data
     ) {
-        // repository getByPassphrase
+        // passphrase でルーム取得
         var room = jdbcTemplate.query(
-                "SELECT passphrase, status, round, goal FROM rooms WHERE passphrase = ?", // Select goal
+                "SELECT passphrase, status, round, goal FROM rooms WHERE passphrase = ?",
                 rs -> rs.next() ? new Room(
                         rs.getString("passphrase"),
                         rs.getString("status"),
                         rs.getInt("round"),
-                        rs.getString("goal") // Get goal
+                        rs.getString("goal")
                 ) : null,
                 passphrase
         );
@@ -99,8 +99,8 @@ RoomController {
             return ResponseEntity.notFound().build();
         }
 
-        // entity update
-        var updatedRoom = new Room(room.passphrase(), data.get("status"), room.round(), room.goal()); // Retain goal
+        // エンティティ更新（goal は維持）
+        var updatedRoom = new Room(room.passphrase(), data.get("status"), room.round(), room.goal());
 
         // 部屋のステータスを更新
         jdbcTemplate.update(
@@ -119,31 +119,31 @@ RoomController {
     @GetMapping("/{passphrase}")
     public ResponseEntity<RoomResponse> getRoomStatus(@PathVariable String passphrase) {
         Room room = jdbcTemplate.query(
-                "SELECT passphrase, status, round, goal FROM rooms WHERE passphrase = ?", // Select goal
+                "SELECT passphrase, status, round, goal FROM rooms WHERE passphrase = ?",
                 rs -> rs.next() ? new Room(
                         rs.getString("passphrase"),
                         rs.getString("status"),
                         rs.getInt("round"),
-                        rs.getString("goal") // Get goal
+                        rs.getString("goal")
                 ) : null,
                 passphrase
         );
 
         if (room == null) {
-            // If no room exists, return a default WAITING state
+            // 部屋がない場合は WAITING 状態を返す
             return ResponseEntity.ok(new RoomResponse(
                     "WAITING",
                     Collections.emptyList(),
-                    "", // Use empty string for default goal
+                    "",
                     Collections.emptyList()
             ));
         }
 
         int currentRound = room.round();
         String roomStatus = room.status();
-        String roomGoal = room.goal(); // Get the goal from the room object
+        String roomGoal = room.goal();
 
-        // Get distributed words
+        // 配布された単語を取得
         List<String> distributedWords = jdbcTemplate.queryForList(
                 "SELECT value FROM distributed_words WHERE room_passphrase = ? AND round = ?",
                 String.class,
@@ -151,7 +151,7 @@ RoomController {
                 currentRound
         );
 
-        // Get members
+        // 参加者を取得
         List<MemberResponse> members = jdbcTemplate.query(
             "SELECT id, name FROM users WHERE room_passphrase = ?",
             new RowMapper<MemberResponse>() {
@@ -163,7 +163,7 @@ RoomController {
                     List<SentenceResult> beforeResult = Collections.emptyList();
 
                     if (roomStatus.equals("SENTENCE_INPUT") || roomStatus.equals("VOTE_INPUT")) {
-                        // Get user's sentence for the current round
+                        // 現在ラウンドのユーザー文章を取得
                         sentence = jdbcTemplate.query(
                                 "SELECT value FROM sentences WHERE room_passphrase = ? AND user_id = ? AND round = ?",
                                 (sentenceRs) -> sentenceRs.next() ? sentenceRs.getString("value") : null,
@@ -172,7 +172,7 @@ RoomController {
                     }
 
                     if (roomStatus.equals("VOTE_INPUT") && currentRound > 1) {
-                        // Get sentences from previous round and their vote counts
+                        // 前ラウンドの文章と得票数を取得
                         int previousRound = currentRound - 1;
                         beforeResult = jdbcTemplate.query(
                             "SELECT s.value, COUNT(v.id) as vote_count " +
@@ -195,7 +195,7 @@ RoomController {
         return ResponseEntity.ok(new RoomResponse(
             roomStatus,
             members,
-            roomGoal, // Pass the retrieved goal here
+            roomGoal,
             distributedWords
         ));
     }
