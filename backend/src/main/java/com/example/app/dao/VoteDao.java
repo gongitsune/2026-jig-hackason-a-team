@@ -39,7 +39,8 @@ public class VoteDao {
             return ps;
         }, keyHolder);
 
-        long id = keyHolder.getKey() != null ? keyHolder.getKey().longValue() : 0;
+        Number key = keyHolder.getKeys() != null ? (Number) keyHolder.getKeys().get("id") : null;
+        long id = key != null ? key.longValue() : 0;
         return new Vote(id, vote.roomPassphrase(), vote.userId(), vote.sentenceId());
     }
 
