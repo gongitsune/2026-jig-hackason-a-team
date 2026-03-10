@@ -1,25 +1,26 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ja">
   <head>
-    <title>
-      突発単語会話
-    </title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="style/global.css"/>
-    <link rel="stylesheet" href="style/word.css"/>
+    <title>突発単語会話</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style/global.css" />
+    <link rel="stylesheet" href="style/word.css" />
     <script src="src/word.js" defer type="module"></script>
+    <script src="src/pooling.js" defer type="module"></script>
   </head>
-  <body >
+  <body>
     <div class="container">
-    <div class="target">
-      <label class="target-label" for="target">目標:</label>
-      <p class="target-title" id="target"></p>
-    </div>
-    <div class="a">
+      <div class="target">
+        <label class="target-label" for="target">目標:</label>
+        <p class="target-title" id="target"></p>
+      </div>
+      <div class="a">
         <section class="writing-container">
           <div class="textarea-wrapper">
             <div class="textarea-toolbar">
-              <span class="textarea-toolbar-title">あなたのセンスで単語を追加してください</span>
+              <span class="textarea-toolbar-title"
+                >あなたのセンスで単語を追加してください</span
+              >
             </div>
             <input
               class="word-textarea"
@@ -27,18 +28,21 @@
               wrap="off"
               placeholder="ここに単語を入力してください..."
             />
-            <div class = "textarea-footer">
-              <button class="submit-button" id="submit-button">送信</button>
+            <div class="textarea-footer">
+              <button type="button" class="submit-button" id="submit-button">
+                送信
+              </button>
             </div>
           </div>
         </section>
-    </div>
-    <div class = "a">
-      <p>送信済み:</p>
-      <div class="card" id="word_1">
-        <span class="preword-0">空</span>
       </div>
-    </div>
+      <div class="a">
+        <p>送信済み:</p>
+        <div class="card" id="word_1">
+          <span class="preword-0">空</span>
+        </div>
+      </div>
     </div>
   </body>
 </html>
+

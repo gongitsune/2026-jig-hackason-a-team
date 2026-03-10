@@ -1,4 +1,4 @@
-import { API } from "./api.js";
+import { API, addRoomStatusListener } from "./api.js";
 
 const roomStatus = await API.getRoomStatus();
 
@@ -9,14 +9,16 @@ addRoomStatusListener((updatedStatus) => {
 });
 
 const target_text = document.getElementById("target");
+console.log(roomStatus);
 target_text.textContent = roomStatus.goal;
 
-var words = document.getElementsByClassName("card");
-var input_word = document.getElementById("word-textarea");
-var button = document.getElementById("submit-button");
-button.onclick = submit_word;
+const words = document.getElementsByClassName("card");
+const input_word = document.getElementById("word-textarea");
+const button = document.getElementById("submit-button");
 
-function submit_word() {
+button.onclick = submitWord;
+
+function submitWord() {
 	if (input_word.value === "") {
 		alert("入力を行ってください");
 		return;
