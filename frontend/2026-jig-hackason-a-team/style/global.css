@@ -139,3 +139,10 @@ input[type="text"] {
 	font-size: 1rem;
 	transition: border-color 0.2s;
 }
+
+/* Inline error message */
+.error-message {
+	color: #dc2626;
+	font-size: 0.875rem;
+	margin-top: 0.5rem;
+}

@@ -1,26 +1,17 @@
 const BACKEND_URL = "https://two026-jig-hackason-a-team.onrender.com";
 
 export const getUserId = () => {
-	const value = localStorage.getItem("userId");
-	if (!value) {
-		window.alert("トップページからアクセスしてください。");
-	}
-	return value;
+	return localStorage.getItem("userId");
 };
 const getPassphrase = () => {
-	const value = localStorage.getItem("passphrase");
-	if (!value) {
-		window.alert("トップページからアクセスしてください。");
-	}
-	return value;
+	return localStorage.getItem("passphrase");
 };
 
 export const checkValidAccess = () => {
 	const userId = localStorage.getItem("userId");
 	const passphrase = localStorage.getItem("passphrase");
 	if (!userId || !passphrase) {
-		window.alert("トップページからアクセスしてください。");
-		window.location.href = "./index.html";
+		window.location.href = "./index.html?error=unauthorized";
 	}
 };
 

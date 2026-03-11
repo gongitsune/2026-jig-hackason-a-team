@@ -12,6 +12,12 @@ const voteForm = document.getElementById("vote-form");
 const sentenceContainer = document.getElementById("sentence-container");
 const goalElement = document.getElementById("target-goal");
 const submitButton = document.getElementById("submit-button");
+const errorMessage = document.getElementById("error-message");
+
+const showError = (message) => {
+	errorMessage.textContent = message;
+	errorMessage.hidden = false;
+};
 
 // ルームステータスを取得
 const roomStatus = await API.getRoomStatus();
@@ -35,7 +41,7 @@ voteForm.addEventListener("submit", async (event) => {
 	const chooseUserId = formData.get("sentence-list");
 
 	if (!chooseUserId) {
-		window.alert("投票する文書を選択してください。");
+		showError("投票する文書を選択してください。");
 		return;
 	}
 
