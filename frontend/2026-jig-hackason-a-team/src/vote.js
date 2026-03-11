@@ -46,7 +46,10 @@ const radioButtons = roomStatus.members
 
 		const span = document.createElement("span");
 		span.classList.add("card-text");
-		span.textContent = sentence;
+		span.innerHTML = roomStatus.distributedWords.reduce((acc, word) => {
+			console.log("word:", acc);
+			return acc.replaceAll(word, `<span class="highlight">${word}</span>`);
+		}, sentence);
 
 		const label = document.createElement("label");
 		label.classList.add("card");
