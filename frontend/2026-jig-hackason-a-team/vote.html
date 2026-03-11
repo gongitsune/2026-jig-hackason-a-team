@@ -8,17 +8,21 @@
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
+      rel="icon"
+      type="image/x-icon"
+      href="https://gongitsune.github.io/2026-jig-hackason-a-team/favicon.ico"
     />
     <link href="style/global.css" rel="stylesheet" />
     <link href="style/vote.css" rel="stylesheet" />
     <script src="src/vote.js" defer type="module"></script>
     <script src="src/pooling.js" defer type="module"></script>
+    <script src="src/bg-3d.js" defer type="module"></script>
+    <script src="src/components.js" defer type="module"></script>
     <title>ICHIBUN GRAND PRIX - 投票</title>
   </head>
   <body>
@@ -42,6 +46,7 @@
           <div class="sentence-container" id="sentence-container"></div>
 
           <div class="submit-area">
+            <p class="error-message" id="error-message" hidden></p>
             <button class="submit-button" type="submit" id="submit-button">
               投票
             </button>

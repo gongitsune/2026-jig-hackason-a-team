@@ -32,7 +32,8 @@ fieldset {
 
 body {
 	font-family: "Lexend", sans-serif;
-	background-color: var(--background-light);
+	/* 3D背景を見せるために透明にする。実際の背景色は bg-3d.js で設定 */
+	background-color: transparent;
 	color: var(--slate-900);
 	min-height: 100vh;
 	margin: 0;
@@ -55,6 +56,13 @@ body {
 	border-radius: 0.75rem;
 	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 	border: 1px solid var(--slate-200);
+}
+
+.rough-border {
+	position: absolute;
+	top: 0;
+	left: 0;
+	pointer-events: none;
 }
 
 .section-header {
@@ -130,4 +138,11 @@ input[type="text"] {
 	border-radius: 0.5rem;
 	font-size: 1rem;
 	transition: border-color 0.2s;
+}
+
+/* Inline error message */
+.error-message {
+	color: #dc2626;
+	font-size: 0.875rem;
+	margin-top: 0.5rem;
 }

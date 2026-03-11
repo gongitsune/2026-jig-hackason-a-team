@@ -4,6 +4,16 @@ import { API, addRoomStatusListener } from "./api.js";
 const joinForm = document.getElementById("join-form");
 const joinButton = document.getElementById("join-button");
 const passphraseInput = document.getElementById("room-id-input");
+const errorMessage = document.getElementById("error-message");
+
+const showError = (message) => {
+	errorMessage.textContent = message;
+	errorMessage.hidden = false;
+};
+
+const clearError = () => {
+	errorMessage.hidden = true;
+};
 
 // ユーザIDを生成
 if (!localStorage.getItem("userId")) {
@@ -13,6 +23,12 @@ if (!localStorage.getItem("userId")) {
 
 // パスフレーズを消す
 localStorage.removeItem("passphrase");
+
+// checkValidAccess() からリダイレクトされた場合のエラー表示
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("error") === "unauthorized") {
+	showError("トップページからアクセスしてください。");
+}
 
 // フォームの送信イベントを処理
 joinForm.addEventListener("submit", async (event) => {
@@ -28,14 +44,14 @@ joinForm.addEventListener("submit", async (event) => {
 
 	// サーバーに参加リクエストを送信
 	try {
+		clearError();
 		await API.joinRoom(name);
 
 		// 参加成功後、ゲーム画面に遷移
 		window.location.href = "./start.html";
 	} catch (error) {
 		console.error("Failed to join room:", error);
-		// TODO: UIとして表示してあげたほうが親切かも
-		window.alert("参加に失敗しました。時間をおいてもう一度試してください。");
+		showError("参加に失敗しました。時間をおいてもう一度試してください。");
 	}
 });
 
@@ -50,6 +66,5 @@ passphraseInput.addEventListener("input", () => {
 joinButton.disabled = true; // 初期状態では無効
 addRoomStatusListener((roomStatus) => {
 	const isGameStarted = roomStatus.status === "WAITING";
-	console.log("Room status updated:", roomStatus);
 	joinButton.disabled = !isGameStarted;
 });

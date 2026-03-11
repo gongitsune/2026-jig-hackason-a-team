@@ -1,4 +1,6 @@
-import { API, addRoomStatusListener } from "./api.js";
+import { API, addRoomStatusListener, checkValidAccess } from "./api.js";
+
+checkValidAccess();
 
 // HTML要素の取得
 const memberListItems = document.getElementById("member-list-items");
@@ -7,6 +9,12 @@ const targetGoal = document.getElementById("target-goal");
 const resultSentences = document.getElementById("result-sentences");
 const goBackButton = document.getElementById("back-button");
 const beforeResultSection = document.getElementById("before-result");
+const errorMessage = document.getElementById("error-message");
+
+const showError = (message) => {
+	errorMessage.textContent = message;
+	errorMessage.hidden = false;
+};
 
 const updateContents = (roomStatus) => {
 	// 目標の表示（直近の pastResults があればその goal、なければ room の goal）
@@ -86,7 +94,7 @@ startButton.addEventListener("click", async () => {
 		startButton.textContent = "全員のスタートを待っています...";
 	} catch (error) {
 		console.error("ゲームの開始に失敗しました:", error);
-		window.alert("ゲームの開始に失敗しました。もう一度試してください。");
+		showError("ゲームの開始に失敗しました。もう一度試してください。");
 	}
 });
 

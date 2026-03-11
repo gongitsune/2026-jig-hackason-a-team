@@ -1,23 +1,29 @@
 const BACKEND_URL = "https://two026-jig-hackason-a-team.onrender.com";
 
 export const getUserId = () => {
-	const value = localStorage.getItem("userId");
-	if (!value) {
-		window.alert("トップページからアクセスしてください。");
-		// TODO: テスト用のユーザIDを生成して保存する。実装後は削除する。
-		localStorage.setItem("userId", "test-user-id");
-	}
-	return value;
+	return localStorage.getItem("userId");
 };
 const getPassphrase = () => {
-	const value = localStorage.getItem("passphrase");
-	if (!value) {
-		window.alert("トップページからアクセスしてください。");
-		// TODO: テスト用のパスフレーズを生成して保存する。実装後は削除する。
-		localStorage.setItem("passphrase", "test-passphrase");
-	}
-	return value;
+	return localStorage.getItem("passphrase");
 };
+
+export const checkValidAccess = () => {
+	const userId = localStorage.getItem("userId");
+	const passphrase = localStorage.getItem("passphrase");
+	if (!userId || !passphrase) {
+		window.location.href = "./index.html?error=unauthorized";
+	}
+};
+
+async function handleResponse(response) {
+	if (!response.ok) {
+		const errorBody = await response.json().catch(() => ({}));
+		throw new Error(
+			`HTTP ${response.status}: ${errorBody.message || response.statusText}`,
+		);
+	}
+	return response;
+}
 
 async function GET(endpoint) {
 	const response = await fetch(`${BACKEND_URL}${endpoint}`, {
@@ -26,7 +32,7 @@ async function GET(endpoint) {
 			"X-User-Id": getUserId(),
 		},
 	});
-	return response;
+	return handleResponse(response);
 }
 
 async function POST(endpoint, data) {
@@ -38,7 +44,7 @@ async function POST(endpoint, data) {
 		},
 		body: JSON.stringify(data),
 	});
-	return response;
+	return handleResponse(response);
 }
 
 async function PUT(endpoint, data) {
@@ -50,7 +56,7 @@ async function PUT(endpoint, data) {
 		},
 		body: JSON.stringify(data),
 	});
-	return response;
+	return handleResponse(response);
 }
 
 // API関数のエクスポート
