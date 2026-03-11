@@ -41,7 +41,7 @@ body {
 
 .container {
 	max-width: 800px;
-	margin: 0 auto;
+	margin: 4rem auto;
 	padding: 0 1rem;
 	min-height: 100vh;
 	display: flex;

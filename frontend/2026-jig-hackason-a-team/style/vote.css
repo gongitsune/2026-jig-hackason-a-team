@@ -30,8 +30,8 @@
 
 .card-text {
 	.highlight {
-		background-color: var(--primary);
-		color: var(--white);
+		background-color: var(--slate-100);
+		/* color: var(--white); */
 		padding: 0.25rem 0.5rem;
 		margin: 0 0.05rem;
 		border-radius: 0.25rem;
