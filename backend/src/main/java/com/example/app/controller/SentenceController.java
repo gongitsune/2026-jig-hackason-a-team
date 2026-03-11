@@ -43,7 +43,7 @@ public class SentenceController {
         }
         value = value.trim();
 
-        Optional<Room> roomOpt = roomDao.findByPassphrase(passphrase);
+        Optional<Room> roomOpt = roomDao.findByPassphraseForUpdate(passphrase);
         if (roomOpt.isEmpty()) {
             throw new IllegalArgumentException("Room not found");
         }
