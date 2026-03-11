@@ -51,7 +51,8 @@ public class VoteController {
             throw new IllegalArgumentException("Cannot vote for yourself");
         }
 
-        Optional<Room> roomOpt = roomDao.findByPassphrase(passphrase);
+        // ルーム行をロックして同時投票時のレースコンディションを防止
+        Optional<Room> roomOpt = roomDao.findByPassphraseForUpdate(passphrase);
         if (roomOpt.isEmpty()) {
             throw new IllegalArgumentException("Room not found");
         }
