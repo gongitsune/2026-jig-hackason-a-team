@@ -40,11 +40,13 @@ const updateContents = (roomStatus) => {
 
 	// メンバーリストの更新
 	memberListItems.innerHTML = ""; // 一旦リセット
-	roomStatus.members.forEach((member) => {
-		const listItem = document.createElement("li");
-		listItem.classList.add("member-list-item");
-		const point = pointsByUserId[member.userId] ?? 0;
-		listItem.innerHTML = `
+	roomStatus.members
+		.toSorted((a, b) => pointsByUserId[b.userId] - pointsByUserId[a.userId])
+		.forEach((member) => {
+			const listItem = document.createElement("li");
+			listItem.classList.add("member-list-item");
+			const point = pointsByUserId[member.userId] ?? 0;
+			listItem.innerHTML = `
     <div class="member-name">
       <span class="material-symbols-outlined">account_circle</span>
       ${member.name}
@@ -52,8 +54,8 @@ const updateContents = (roomStatus) => {
     <span class="point"> ${point}pt </span>
   `;
 
-		memberListItems.appendChild(listItem);
-	});
+			memberListItems.appendChild(listItem);
+		});
 
 	// メンバーの数に応じてスタートボタンの表示を切り替え
 	const memberCount = roomStatus.members.length;
@@ -67,10 +69,12 @@ const updateContents = (roomStatus) => {
 	// 過去ラウンドの投票結果の表示（直近ラウンドを表示）
 	resultSentences.innerHTML = ""; // 一旦リセット
 	if (lastRound) {
-		lastRound.results.forEach((result) => {
-			const listItem = document.createElement("li");
-			listItem.classList.add("user-info");
-			listItem.innerHTML = `
+		lastRound.results
+			.toSorted((a, b) => b.voteCount - a.voteCount)
+			.forEach((result) => {
+				const listItem = document.createElement("li");
+				listItem.classList.add("user-info");
+				listItem.innerHTML = `
       <div class="user-info">
         <span class="material-symbols-outlined">account_circle</span>
         <span class="user-name">${result.name}</span>
@@ -81,8 +85,8 @@ const updateContents = (roomStatus) => {
       </div>
     `;
 
-			resultSentences.appendChild(listItem);
-		});
+				resultSentences.appendChild(listItem);
+			});
 	}
 
 	// ステータスを見て次の画面に遷移
