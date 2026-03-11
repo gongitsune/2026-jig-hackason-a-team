@@ -1,12 +1,11 @@
 package com.example.app.dao;
 
-import com.example.app.domain.Room;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
+import com.example.app.domain.Room;
 
 @Repository
 public class RoomDao {
@@ -33,6 +32,17 @@ public class RoomDao {
     public Optional<Room> findByPassphrase(String passphrase) {
         List<Room> results = jdbcTemplate.query(
                 "SELECT passphrase, status, round, goal FROM rooms WHERE passphrase = ?",
+                ROW_MAPPER, passphrase
+        );
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.getFirst());
+    }
+
+    /**
+     * ルーム行をロックして取得。投票の同時実行時のレースコンディション防止用。
+     */
+    public Optional<Room> findByPassphraseForUpdate(String passphrase) {
+        List<Room> results = jdbcTemplate.query(
+                "SELECT passphrase, status, round, goal FROM rooms WHERE passphrase = ? FOR UPDATE",
                 ROW_MAPPER, passphrase
         );
         return results.isEmpty() ? Optional.empty() : Optional.of(results.getFirst());

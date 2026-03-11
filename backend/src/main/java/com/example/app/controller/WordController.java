@@ -1,5 +1,15 @@
 package com.example.app.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 import com.example.app.dao.DistributedWordsDao;
 import com.example.app.dao.RoomDao;
 import com.example.app.dao.UserDao;
@@ -8,12 +18,6 @@ import com.example.app.domain.DistributedWords;
 import com.example.app.domain.Room;
 import com.example.app.domain.Word;
 import com.example.app.pkgs.json.JsonLoader;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/rooms/{passphrase}/words")
@@ -22,7 +26,7 @@ public class WordController {
     private static final String USER_ID_HEADER = "X-User-Id";
     private static final String STATUS_WORD_INPUT = "WORD_INPUT";
     private static final String STATUS_SENTENCE_INPUT = "SENTENCE_INPUT";
-    private static final int REQUIRED_WORDS_FOR_DISTRIBUTION = 4;
+    private static final int REQUIRED_WORDS_FOR_DISTRIBUTION = 10;
 
     private static final List<String> RANDOM_WORD_POOL = JsonLoader.loadStringArray("words.json");
 
@@ -52,7 +56,7 @@ public class WordController {
         }
         value = value.trim();
 
-        Optional<Room> roomOpt = roomDao.findByPassphrase(passphrase);
+        Optional<Room> roomOpt = roomDao.findByPassphraseForUpdate(passphrase);
         if (roomOpt.isEmpty()) {
             throw new IllegalArgumentException("Room not found");
         }
@@ -82,11 +86,16 @@ public class WordController {
         List<String> userWordValues = wordDao.findByRoomPassphraseAndRound(passphrase, round).stream()
                 .map(Word::value)
                 .collect(Collectors.toList());
-        List<String> randomWords = pickRandomWords(6);
-        List<String> pool = new ArrayList<>(userWordValues);
-        pool.addAll(randomWords);
-        Collections.shuffle(pool, random);
-        List<String> distributed = pool.stream().limit(REQUIRED_WORDS_FOR_DISTRIBUTION).collect(Collectors.toList());
+        Collections.shuffle(userWordValues, random);
+
+        List<String> distributed = new ArrayList<>(
+                userWordValues.stream().limit(REQUIRED_WORDS_FOR_DISTRIBUTION).collect(Collectors.toList()));
+
+        if (distributed.size() < REQUIRED_WORDS_FOR_DISTRIBUTION) {
+            int needed = REQUIRED_WORDS_FOR_DISTRIBUTION - distributed.size();
+            distributed.addAll(pickRandomWords(needed));
+        }
+
         distributedWordsDao.insert(new DistributedWords(passphrase, round, String.join(",", distributed)));
         roomDao.updateStatus(passphrase, STATUS_SENTENCE_INPUT);
     }

@@ -22,6 +22,9 @@ wordForm.addEventListener("submit", (event) => {
 	const formData = new FormData(wordForm);
 	const inputWord = formData.get("word-input").trim();
 
+	const wordInput = document.getElementById("word-input");
+	wordInput.disabled = true;
+
 	API.postWords(inputWord);
 	button.disabled = true;
 	button.textContent = "全員の入力を待っています...";

@@ -42,7 +42,11 @@ const wordButtons = roomStatus.distributedWords.map((word) => {
 	wordElement.addEventListener("click", () => {
 		const currentLength = sentenceInput.value.length;
 		if (currentLength + word.length <= MAX_CHAR_COUNT) {
-			sentenceInput.value += word;
+			const cursorPosition = sentenceInput.selectionStart;
+			sentenceInput.value =
+				sentenceInput.value.slice(0, cursorPosition) +
+				word +
+				sentenceInput.value.slice(cursorPosition);
 			// 強制的にinputイベントを発火させて、文字数カウンターとボタンの状態を更新
 			sentenceInput.dispatchEvent(new Event("input"));
 		}
@@ -89,6 +93,12 @@ sentenceInput.addEventListener("input", onInput);
 submitButton.addEventListener("click", () => {
 	const sentence = sentenceInput.value;
 	console.log("送信された文章:", sentence);
+
+	// wordBurronを全て無効化して、送信中は二度と送信できないようにする
+	wordButtons.forEach((button) => {
+		button.disabled = true;
+	});
+	sentenceInput.disabled = true;
 
 	const buttonText = submitButton.innerText;
 	submitButton.disabled = true;
