@@ -7,6 +7,7 @@ import com.example.app.dao.WordDao;
 import com.example.app.domain.DistributedWords;
 import com.example.app.domain.Room;
 import com.example.app.domain.Word;
+import com.example.app.pkgs.json.JsonLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +24,7 @@ public class WordController {
     private static final String STATUS_SENTENCE_INPUT = "SENTENCE_INPUT";
     private static final int REQUIRED_WORDS_FOR_DISTRIBUTION = 4;
 
-    private static final List<String> RANDOM_WORD_POOL = List.of(
-            "激安", "ふにゃふにゃ", "生", "炒め", "虹色", "砂肝", "卵", "肉", "唐揚げ", "寿司",
-            "ラーメン", "カレー", "ピザ", "焼き鳥", "天ぷら", "うどん", "そば", "パスタ"
-    );
+    private static final List<String> RANDOM_WORD_POOL = JsonLoader.loadStringArray("words.json");
 
     private final WordDao wordDao;
     private final RoomDao roomDao;

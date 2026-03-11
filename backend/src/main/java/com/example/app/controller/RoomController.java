@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 @RequestMapping("/rooms")
 public class RoomController {
     private static final List<String> DEFAULT_GOALS = JsonLoader.loadStringArray("goals.json");
-    private static final List<String> DEFAULT_WORDS = JsonLoader.loadStringArray("words.json");
 
     private final JdbcTemplate jdbcTemplate;
     private final RoomDao roomDao;
