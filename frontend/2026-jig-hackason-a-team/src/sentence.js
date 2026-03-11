@@ -94,6 +94,12 @@ submitButton.addEventListener("click", () => {
 	const sentence = sentenceInput.value;
 	console.log("送信された文章:", sentence);
 
+	// wordBurronを全て無効化して、送信中は二度と送信できないようにする
+	wordButtons.forEach((button) => {
+		button.disabled = true;
+	});
+	sentenceInput.disabled = true;
+
 	const buttonText = submitButton.innerText;
 	submitButton.disabled = true;
 	submitButton.innerText = "全員の提出を待っています...";
