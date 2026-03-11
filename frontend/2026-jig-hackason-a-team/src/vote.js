@@ -32,29 +32,10 @@ addRoomStatusListener((updatedStatus) => {
 // 目標の表示
 goalElement.textContent = roomStatus.goal;
 
-// フォームの送信イベントを処理
-voteForm.addEventListener("submit", async (event) => {
-	event.preventDefault(); // フォームのデフォルトの送信動作を防止
-
-	// フォームデータを取得
-	const formData = new FormData(voteForm);
-	const chooseUserId = formData.get("sentence-list");
-
-	if (!chooseUserId) {
-		showError("投票する文書を選択してください。");
-		return;
-	}
-
-	submitButton.disabled = true;
-	submitButton.textContent = "全員の投票を待っています...";
-
-	await API.postVote(chooseUserId);
-});
-
 // 全員分の文書を表示
-roomStatus.members
+const radioButtons = roomStatus.members
 	.filter((member) => member.userId !== getUserId())
-	.forEach((member) => {
+	.map((member) => {
 		const sentence = member.sentence;
 
 		const input = document.createElement("input");
@@ -73,4 +54,28 @@ roomStatus.members
 		label.appendChild(span);
 
 		sentenceContainer.appendChild(label);
+		return input;
 	});
+
+// フォームの送信イベントを処理
+voteForm.addEventListener("submit", async (event) => {
+	event.preventDefault(); // フォームのデフォルトの送信動作を防止
+
+	// フォームデータを取得
+	const formData = new FormData(voteForm);
+	const chooseUserId = formData.get("sentence-list");
+
+	if (!chooseUserId) {
+		showError("投票する文書を選択してください。");
+		return;
+	}
+
+	radioButtons.forEach((button) => {
+		button.disabled = true;
+	});
+
+	submitButton.disabled = true;
+	submitButton.textContent = "全員の投票を待っています...";
+
+	await API.postVote(chooseUserId);
+});
