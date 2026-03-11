@@ -16,6 +16,9 @@ const showError = (message) => {
 	errorMessage.hidden = false;
 };
 
+// 前回表示した pastResults の round を保持（画像の不要な再描画を防ぐ）
+let lastDisplayedRound = null;
+
 const updateContents = (roomStatus) => {
 	// 目標の表示（直近の pastResults があればその goal、なければ room の goal）
 	const pastResults = roomStatus.pastResults || [];
@@ -67,24 +70,30 @@ const updateContents = (roomStatus) => {
 	}
 
 	// 過去ラウンドの投票結果の表示（直近ラウンドを表示、1位が画像を持つ）
-	resultSentences.innerHTML = ""; // 一旦リセット
-	if (lastRound) {
-		const sortedResults = lastRound.results.toSorted(
-			(a, b) => b.voteCount - a.voteCount,
-		);
-		const hasWinnerImage = lastRound.winnerImageAvailable ?? false;
-		sortedResults.forEach((result, index) => {
-			const isFirst = index === 0;
-			const listItem = document.createElement("li");
-			listItem.classList.add("result-item");
-			if (isFirst) listItem.classList.add("result-item--winner");
-			const imageBlock =
-				isFirst && hasWinnerImage
-					? `<div class="winner-image-wrap">
+	// ポーリングのたびに再描画すると画像がちらつくため、同じラウンドならスキップ
+	const currentRoundKey = lastRound
+		? `${lastRound.round}-${lastRound.winnerImageAvailable ?? false}-${lastRound.results?.map((r) => `${r.userId}:${r.voteCount}`).join(",") ?? ""}`
+		: null;
+	if (currentRoundKey !== lastDisplayedRound) {
+		lastDisplayedRound = currentRoundKey;
+		resultSentences.innerHTML = ""; // 一旦リセット
+		if (lastRound) {
+			const sortedResults = lastRound.results.toSorted(
+				(a, b) => b.voteCount - a.voteCount,
+			);
+			const hasWinnerImage = lastRound.winnerImageAvailable ?? false;
+			sortedResults.forEach((result, index) => {
+				const isFirst = index === 0;
+				const listItem = document.createElement("li");
+				listItem.classList.add("result-item");
+				if (isFirst) listItem.classList.add("result-item--winner");
+				const imageBlock =
+					isFirst && hasWinnerImage
+						? `<div class="winner-image-wrap">
             <img class="winner-image" src="${getWinnerImageUrl(lastRound.round)}" alt="${result.sentence}のイメージ" loading="lazy" />
           </div>`
-					: "";
-			listItem.innerHTML = `
+						: "";
+				listItem.innerHTML = `
       <div class="user-info">
         <span class="material-symbols-outlined">account_circle</span>
         <span class="user-name">${result.name}</span>
@@ -96,8 +105,9 @@ const updateContents = (roomStatus) => {
       ${imageBlock}
     `;
 
-			resultSentences.appendChild(listItem);
-		});
+				resultSentences.appendChild(listItem);
+			});
+		}
 	}
 
 	// ステータスを見て次の画面に遷移
