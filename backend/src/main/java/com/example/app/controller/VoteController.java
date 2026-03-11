@@ -12,6 +12,7 @@ import com.example.app.dao.VoteDao;
 import com.example.app.domain.Room;
 import com.example.app.domain.Sentence;
 import com.example.app.domain.Vote;
+import com.example.app.service.RoundCompletionService;
 
 @RestController
 @RequestMapping("/rooms/{passphrase}/votes")
@@ -25,12 +26,15 @@ public class VoteController {
     private final SentenceDao sentenceDao;
     private final RoomDao roomDao;
     private final UserDao userDao;
+    private final RoundCompletionService roundCompletionService;
 
-    public VoteController(VoteDao voteDao, SentenceDao sentenceDao, RoomDao roomDao, UserDao userDao) {
+    public VoteController(VoteDao voteDao, SentenceDao sentenceDao, RoomDao roomDao, UserDao userDao,
+                          RoundCompletionService roundCompletionService) {
         this.voteDao = voteDao;
         this.sentenceDao = sentenceDao;
         this.roomDao = roomDao;
         this.userDao = userDao;
+        this.roundCompletionService = roundCompletionService;
     }
 
     @PostMapping
@@ -82,6 +86,7 @@ public class VoteController {
         int voteCount = voteDao.countByRoomPassphraseAndSentenceRound(passphrase, round);
         int userCount = userDao.countByRoomPassphrase(passphrase);
         if (voteCount >= userCount) {
+            roundCompletionService.generateWinnerImageAsync(passphrase, round);
             roomDao.updateStatusAndRound(passphrase, STATUS_WAITING, round + 1);
         }
         return ResponseEntity.ok().build();

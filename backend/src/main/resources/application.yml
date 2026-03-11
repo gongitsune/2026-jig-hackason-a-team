@@ -10,6 +10,9 @@ spring:
     password: app
     driver-class-name: org.postgresql.Driver
 
+openai:
+  api-key: ${OPENAI_API_KEY:}
+
 management:
   endpoint:
     health:

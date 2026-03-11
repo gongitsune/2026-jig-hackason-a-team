@@ -1,4 +1,4 @@
-import { API, addRoomStatusListener, checkValidAccess } from "./api.js";
+import { API, addRoomStatusListener, checkValidAccess, getWinnerImageUrl } from "./api.js";
 
 checkValidAccess();
 
@@ -66,15 +66,25 @@ const updateContents = (roomStatus) => {
 		startButton.textContent = "スタート";
 	}
 
-	// 過去ラウンドの投票結果の表示（直近ラウンドを表示）
+	// 過去ラウンドの投票結果の表示（直近ラウンドを表示、1位が画像を持つ）
 	resultSentences.innerHTML = ""; // 一旦リセット
 	if (lastRound) {
-		lastRound.results
-			.toSorted((a, b) => b.voteCount - a.voteCount)
-			.forEach((result) => {
-				const listItem = document.createElement("li");
-				listItem.classList.add("user-info");
-				listItem.innerHTML = `
+		const sortedResults = lastRound.results.toSorted(
+			(a, b) => b.voteCount - a.voteCount,
+		);
+		const hasWinnerImage = lastRound.winnerImageAvailable ?? false;
+		sortedResults.forEach((result, index) => {
+			const isFirst = index === 0;
+			const listItem = document.createElement("li");
+			listItem.classList.add("result-item");
+			if (isFirst) listItem.classList.add("result-item--winner");
+			const imageBlock =
+				isFirst && hasWinnerImage
+					? `<div class="winner-image-wrap">
+            <img class="winner-image" src="${getWinnerImageUrl(lastRound.round)}" alt="${result.sentence}のイメージ" loading="lazy" />
+          </div>`
+					: "";
+			listItem.innerHTML = `
       <div class="user-info">
         <span class="material-symbols-outlined">account_circle</span>
         <span class="user-name">${result.name}</span>
@@ -83,10 +93,11 @@ const updateContents = (roomStatus) => {
         <span class="sentence-text">${result.sentence}</span>
         <span class="vote-count">${result.voteCount}票</span>
       </div>
+      ${imageBlock}
     `;
 
-				resultSentences.appendChild(listItem);
-			});
+			resultSentences.appendChild(listItem);
+		});
 	}
 
 	// ステータスを見て次の画面に遷移

@@ -8,13 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
-
-import com.example.app.pkgs.json.JsonLoader;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import com.example.app.dao.RoomDao;
+import com.example.app.dao.RoundWinnerImageDao;
 import com.example.app.dao.UserDao;
 import com.example.app.domain.Room;
 import com.example.app.domain.User;
@@ -22,6 +21,7 @@ import com.example.app.dto.MemberResponse;
 import com.example.app.dto.PastRoundResult;
 import com.example.app.dto.RoomResponse;
 import com.example.app.dto.SentenceResultWithUser;
+import com.example.app.pkgs.json.JsonLoader;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
@@ -32,11 +32,14 @@ public class RoomController {
     private final JdbcTemplate jdbcTemplate;
     private final RoomDao roomDao;
     private final UserDao userDao;
+    private final RoundWinnerImageDao roundWinnerImageDao;
 
-    public RoomController(JdbcTemplate jdbcTemplate, RoomDao roomDao, UserDao userDao) {
+    public RoomController(JdbcTemplate jdbcTemplate, RoomDao roomDao, UserDao userDao,
+                         RoundWinnerImageDao roundWinnerImageDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.roomDao = roomDao;
         this.userDao = userDao;
+        this.roundWinnerImageDao = roundWinnerImageDao;
     }
 
     /**
@@ -278,7 +281,8 @@ public class RoomController {
                 if (goal == null || goal.isBlank()) {
                     goal = fallbackGoal != null ? fallbackGoal : "";
                 }
-                result.add(new PastRoundResult(round, goal, results));
+                boolean winnerImageAvailable = roundWinnerImageDao.existsByRoomPassphraseAndRound(passphrase, round);
+                result.add(new PastRoundResult(round, goal, results, winnerImageAvailable));
             }
         }
         return result;

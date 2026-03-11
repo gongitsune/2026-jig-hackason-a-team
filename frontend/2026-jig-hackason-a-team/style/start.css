@@ -90,6 +90,24 @@
 	}
 }
 
+/* 1位の画像表示（文章の下に中央揃え） */
+.result-item--winner {
+	.winner-image-wrap {
+		display: flex;
+		justify-content: center;
+		margin-top: 1rem;
+	}
+
+	.winner-image {
+		width: 100%;
+		max-width: 320px;
+		height: auto;
+		border-radius: 0.75rem;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		object-fit: cover;
+	}
+}
+
 .back-container {
 	display: flex;
 	justify-content: end;

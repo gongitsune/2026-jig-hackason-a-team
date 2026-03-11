@@ -73,6 +73,10 @@ export const API = {
 		GET(`/rooms/${getPassphrase()}`).then((res) => res.json()),
 };
 
+// 1位の文章から生成した画像のURL（winnerImageAvailable が true のとき使用）
+export const getWinnerImageUrl = (round) =>
+	`${BACKEND_URL}/rooms/${getPassphrase()}/rounds/${round}/winner-image`;
+
 // ルームステータス
 export const addRoomStatusListener = (listener) => {
 	window.addEventListener("roomStatusUpdate", (e) => listener(e.detail));
