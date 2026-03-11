@@ -55,6 +55,15 @@ const updateContents = (roomStatus) => {
 		memberListItems.appendChild(listItem);
 	});
 
+	// メンバーの数に応じてスタートボタンの表示を切り替え
+	const memberCount = roomStatus.members.length;
+	startButton.disabled = memberCount < 2;
+	if (memberCount < 2) {
+		startButton.textContent = "参加者が2人以上必要です";
+	} else {
+		startButton.textContent = "スタート";
+	}
+
 	// 過去ラウンドの投票結果の表示（直近ラウンドを表示）
 	resultSentences.innerHTML = ""; // 一旦リセット
 	if (lastRound) {
