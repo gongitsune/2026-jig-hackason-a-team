@@ -70,7 +70,19 @@ public class RoomController {
             return ResponseEntity.ok().build();
         }
 
-        String goal = DEFAULT_GOALS.get(ThreadLocalRandom.current().nextInt(DEFAULT_GOALS.size()));
+        // 重複を除外したゴールのリストを作成する
+        List<String> roundGoals = jdbcTemplate.queryForList(
+                "SELECT goal FROM round_goals WHERE room_passphrase = ?",
+                String.class,
+                passphrase
+        );
+        List<String> availableGoals = DEFAULT_GOALS.stream()
+                .filter(g -> !roundGoals.contains(g))
+                .toList();
+
+        // ゴールを抽選する
+        String goal = availableGoals.get(ThreadLocalRandom.current().nextInt(availableGoals.size()));
+
         roomDao.insert(new Room(passphrase, "WAITING", 1, goal));
         addOrUpdateUser(userId, passphrase, userName);
         return ResponseEntity.ok().build();
