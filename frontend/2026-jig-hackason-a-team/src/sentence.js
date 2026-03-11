@@ -42,7 +42,11 @@ const wordButtons = roomStatus.distributedWords.map((word) => {
 	wordElement.addEventListener("click", () => {
 		const currentLength = sentenceInput.value.length;
 		if (currentLength + word.length <= MAX_CHAR_COUNT) {
-			sentenceInput.value += word;
+			const cursorPosition = sentenceInput.selectionStart;
+			sentenceInput.value =
+				sentenceInput.value.slice(0, cursorPosition) +
+				word +
+				sentenceInput.value.slice(cursorPosition);
 			// 強制的にinputイベントを発火させて、文字数カウンターとボタンの状態を更新
 			sentenceInput.dispatchEvent(new Event("input"));
 		}
