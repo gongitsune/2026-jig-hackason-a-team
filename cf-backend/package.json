@@ -1,0 +1,16 @@
+{
+	"name": "cf-backend",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"cf-typegen": "wrangler types"
+	},
+	"devDependencies": {
+		"@types/node": "^25.4.0",
+		"typescript": "^5.5.2",
+		"wrangler": "^4.72.0"
+	}
+}
