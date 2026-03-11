@@ -24,6 +24,16 @@ export const checkValidAccess = () => {
 	}
 };
 
+async function handleResponse(response) {
+	if (!response.ok) {
+		const errorBody = await response.json().catch(() => ({}));
+		throw new Error(
+			`HTTP ${response.status}: ${errorBody.message || response.statusText}`,
+		);
+	}
+	return response;
+}
+
 async function GET(endpoint) {
 	const response = await fetch(`${BACKEND_URL}${endpoint}`, {
 		method: "GET",
@@ -31,7 +41,7 @@ async function GET(endpoint) {
 			"X-User-Id": getUserId(),
 		},
 	});
-	return response;
+	return handleResponse(response);
 }
 
 async function POST(endpoint, data) {
@@ -43,7 +53,7 @@ async function POST(endpoint, data) {
 		},
 		body: JSON.stringify(data),
 	});
-	return response;
+	return handleResponse(response);
 }
 
 async function PUT(endpoint, data) {
@@ -55,7 +65,7 @@ async function PUT(endpoint, data) {
 		},
 		body: JSON.stringify(data),
 	});
-	return response;
+	return handleResponse(response);
 }
 
 // API関数のエクスポート
