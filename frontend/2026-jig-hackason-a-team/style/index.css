@@ -5,6 +5,7 @@
 	color: var(--slate-800);
 	line-height: 1.25;
 	text-align: center;
+	margin-top: 10rem;
 }
 
 /* Join form */
@@ -22,4 +23,33 @@
 .join-button:disabled {
 	background-color: var(--slate-300);
 	cursor: not-allowed;
+}
+
+/* Screenshots */
+.screenshots-desc {
+	margin-top: 2rem;
+	font-size: 1.25rem;
+	font-weight: 500;
+	color: var(--slate-700);
+	text-align: center;
+}
+.screenshots {
+	margin-top: 2rem;
+	margin-bottom: 4rem;
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: 1.5fr 1fr;
+	/* スマホなら1列 */
+	@media (max-width: 768px) {
+		grid-template-columns: 1fr;
+	}
+	backdrop-filter: blur(3px);
+	/* grid-template-rows: ; */
+
+	img {
+		width: 100%;
+		height: auto;
+		border-radius: 0.5rem;
+		border: 1px solid var(--slate-200);
+	}
 }
