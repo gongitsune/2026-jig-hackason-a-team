@@ -1,5 +1,10 @@
 package com.example.app.controller;
 
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 import com.example.app.dao.RoomDao;
 import com.example.app.dao.SentenceDao;
 import com.example.app.dao.UserDao;
@@ -7,12 +12,6 @@ import com.example.app.dao.VoteDao;
 import com.example.app.domain.Room;
 import com.example.app.domain.Sentence;
 import com.example.app.domain.Vote;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/rooms/{passphrase}/votes")
