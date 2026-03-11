@@ -38,6 +38,17 @@ public class RoomDao {
         return results.isEmpty() ? Optional.empty() : Optional.of(results.getFirst());
     }
 
+    /**
+     * ルーム行をロックして取得。投票の同時実行時のレースコンディション防止用。
+     */
+    public Optional<Room> findByPassphraseForUpdate(String passphrase) {
+        List<Room> results = jdbcTemplate.query(
+                "SELECT passphrase, status, round, goal FROM rooms WHERE passphrase = ? FOR UPDATE",
+                ROW_MAPPER, passphrase
+        );
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.getFirst());
+    }
+
     public void updateStatus(String passphrase, String status) {
         jdbcTemplate.update("UPDATE rooms SET status = ? WHERE passphrase = ?", status, passphrase);
     }
