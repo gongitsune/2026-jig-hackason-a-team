@@ -1,6 +1,0 @@
-# Neon 接続用（環境変数 NEON_URL, NEON_USER, NEON_PASSWORD を設定）
-spring:
-  datasource:
-    url: ${NEON_URL:jdbc:postgresql://localhost:5432/app}?sslmode=require
-    username: ${NEON_USER:app}
-    password: ${NEON_PASSWORD:app}
