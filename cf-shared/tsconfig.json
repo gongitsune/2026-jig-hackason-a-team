@@ -36,6 +36,6 @@
 
 		/* Skip type checking all .d.ts files. */
 		"skipLibCheck": true,
-		"types": ["node"]
+		"types": ["node", "src/index.d.ts", "src/error.d.ts"]
 	}
 }
