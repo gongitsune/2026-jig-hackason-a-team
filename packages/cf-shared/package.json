@@ -1,21 +1,12 @@
 {
-  "name": "cf-shared",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.31.0",
-  "devDependencies": {
-    "oxfmt": "^0.39.0",
-    "oxlint": "^1.54.0",
-    "typescript": "^5.9.3"
-  },
-  "dependencies": {
-    "valibot": "^1.2.0"
-  }
+	"name": "cf-shared",
+	"version": "1.0.0",
+	"description": "",
+	"keywords": [],
+	"license": "MIT",
+	"author": "",
+	"scripts": {},
+	"dependencies": {},
+	"devDependencies": {},
+	"packageManager": "pnpm@10.31.0"
 }
