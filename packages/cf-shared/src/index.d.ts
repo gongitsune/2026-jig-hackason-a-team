@@ -1,24 +1,15 @@
 import { IllegalOperationError, InvalidFormatError, RoomStatusNotValidError, UserDupulicateError, WordDupulicateError } from "./error";
 
+export * from "./error";
+
 export interface PublicAPI {
 	/**
-	 * ユーザIDで認証して、認証に成功したらAuthedAPIを返す。
+	 * ユーザIDで認証して、認証に成功したらRoomAPIを返す。
 	 * @param userId UUIDv4
-	 * @returns 認証に成功したらAuthedAPIを返す。
+	 * @returns 認証に成功したらRoomAPIを返す。
 	 * @throws {UserDupulicateError} ユーザIDが重複している場合にスローされる。
 	 */
-	authenticate(userId: string): Promise<AuthedAPI>;
-}
-
-export interface AuthedAPI {
-	/**
-	 * 合言葉を指定してルームに参加する。ルームが存在しない場合は新たに作成される。
-	 * ルームがWaiting状態でない場合はエラーがスローされる。
-	 * @param passphrase ルームの合言葉
-	 * @returns ルームAPI
-	 * @throws {RoomStatusNotValidError} ルームが参加可能な状態ではない場合にスローされる。
-	 */
-	joinRoom(passphrase: string): Promise<RoomAPI>;
+	authenticate(userId: string, passphrase): Promise<RoomAPI>;
 }
 
 export interface RoomAPI {

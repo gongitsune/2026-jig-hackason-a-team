@@ -30,6 +30,9 @@ importers:
       capnweb:
         specifier: ^0.6.1
         version: 0.6.1
+      cf-shared:
+        specifier: workspace:*
+        version: link:../cf-shared
     devDependencies:
       wrangler:
         specifier: ^4.72.0
