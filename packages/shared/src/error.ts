@@ -44,8 +44,18 @@ export class InvalidFormatError extends Error {
  * 送信された単語が既に存在する場合にスローされるエラー
  */
 export class WordDupulicateError extends Error {
-	constructor(userId: string, word: string) {
-		super(`User with ID ${userId} has already submitted the word: ${word}`);
+	constructor(word: string) {
+		super(`Word "${word}" already exists`);
 		this.name = "WordDupulicateError";
+	}
+}
+
+/**
+ * ユーザーが既に単語を送信している場合にスローされるエラー
+ */
+export class UserAlreadySubmittedWordError extends Error {
+	constructor(userId: string) {
+		super(`User with ID ${userId} has already submitted a word`);
+		this.name = "UserAlreadySubmittedWordError";
 	}
 }
