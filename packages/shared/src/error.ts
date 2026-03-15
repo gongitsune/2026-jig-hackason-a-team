@@ -1,4 +1,4 @@
-import { RoomStatus } from ".";
+import { RoomStatus } from "./api";
 
 /**
  * 不正な操作が行われたときにスローされるエラー
@@ -44,8 +44,8 @@ export class InvalidFormatError extends Error {
  * 送信された単語が既に存在する場合にスローされるエラー
  */
 export class WordDupulicateError extends Error {
-	constructor(word: string) {
-		super(`Word "${word}" already exists`);
+	constructor(userId: string, word: string) {
+		super(`User with ID ${userId} has already submitted the word: ${word}`);
 		this.name = "WordDupulicateError";
 	}
 }

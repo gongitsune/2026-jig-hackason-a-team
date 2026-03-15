@@ -1,0 +1,13 @@
+{
+	"name": "@ichibun/shared",
+	"version": "0.0.1",
+	"description": "",
+	"license": "MIT",
+	"exports": {
+		"./*": "./src/*.ts"
+	},
+	"scripts": {},
+	"dependencies": {},
+	"devDependencies": {},
+	"packageManager": "pnpm@10.31.0"
+}

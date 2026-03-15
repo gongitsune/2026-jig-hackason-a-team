@@ -1,7 +1,5 @@
 import { IllegalOperationError, InvalidFormatError, RoomStatusNotValidError, UserDupulicateError, WordDupulicateError } from "./error";
 
-export * from "./error";
-
 export interface PublicAPI {
 	/**
 	 * ユーザIDで認証して、認証に成功したらRoomAPIを返す。
