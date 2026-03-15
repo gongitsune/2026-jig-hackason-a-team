@@ -1,5 +1,5 @@
 {
-	"name": "ichibun-grand-prix",
+	"name": "ichibun",
 	"private": true,
 	"description": "2026 jigjp spring hackathon a-team project",
 	"license": "MIT",
@@ -10,14 +10,14 @@
 		"jintajinta"
 	],
 	"scripts": {},
+	"dependencies": {
+		"valibot": "^1.2.0"
+	},
 	"devDependencies": {
 		"@types/node": "^25.5.0",
 		"oxfmt": "^0.40.0",
 		"oxlint": "^1.55.0",
 		"typescript": "^5.9.3"
-	},
-	"dependencies": {
-		"valibot": "^1.2.0"
 	},
 	"engines": {
 		"node": ">=25.8.0"
