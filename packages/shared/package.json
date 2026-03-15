@@ -4,7 +4,8 @@
 	"description": "",
 	"license": "MIT",
 	"exports": {
-		"./*": "./src/*.ts"
+		"./*": "./src/*.ts",
+		"./schemas": "./src/schemas/*.ts"
 	},
 	"scripts": {},
 	"dependencies": {},
