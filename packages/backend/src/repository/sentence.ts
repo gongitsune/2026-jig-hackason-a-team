@@ -1,6 +1,5 @@
 import { SentenceSchema } from "@ichibun/shared/schemas/sentence";
 import { UserIdSchema } from "@ichibun/shared/schemas/user";
-import assert from "assert";
 import * as v from "valibot";
 
 export class SentenceRepository {
@@ -11,8 +10,8 @@ export class SentenceRepository {
 	}
 
 	public async putSentence(userId: string, sentence: string): Promise<void> {
-		assert(v.is(SentenceSchema, sentence), "Invalid sentence data");
-		assert(v.is(UserIdSchema, userId), "Invalid user ID");
+		v.assert(SentenceSchema, sentence);
+		v.assert(UserIdSchema, userId);
 
 		await this.storage.put(`sentences:${userId}`, sentence);
 	}
@@ -20,7 +19,7 @@ export class SentenceRepository {
 	public async getSentence(userId: string): Promise<string | null> {
 		const sentence = await this.storage.get(`sentences:${userId}`);
 		if (sentence) {
-			assert(v.is(SentenceSchema, sentence), "Invalid sentence data in storage");
+			v.assert(SentenceSchema, sentence);
 			return sentence;
 		}
 

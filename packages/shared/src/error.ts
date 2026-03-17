@@ -1,4 +1,4 @@
-import { RoomStatus } from "./api";
+import { RoomStatus } from "./api.js";
 
 /**
  * 不正な操作が行われたときにスローされるエラー

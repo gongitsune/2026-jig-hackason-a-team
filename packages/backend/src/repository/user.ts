@@ -1,6 +1,11 @@
 import * as v from "valibot";
-import assert from "assert";
-import { User, UserSchema } from "@ichibun/shared/schemas/user";
+import { User } from "@backend/domain/user.js";
+import { UserIdSchema, UserNameSchema } from "@ichibun/shared/schemas/user";
+
+const Schema = v.object({
+	id: UserIdSchema,
+	name: UserNameSchema,
+});
 
 export class UserRepository {
 	private storage: DurableObjectStorage;
@@ -9,21 +14,22 @@ export class UserRepository {
 		this.storage = storage;
 	}
 
-	async getUser(userId: string): Promise<User | null> {
+	public async getUser(userId: string): Promise<User | null> {
 		const user = await this.storage.get(`user:${userId}`);
-		if (user) {
-			assert(v.is(UserSchema, user), "Invalid user data in storage");
-			return user;
+		if (user && v.is(Schema, user)) {
+			return new User(user.id, user.name);
 		}
 		return null;
 	}
 
-	async deleteUser(userId: string): Promise<boolean> {
+	public async deleteUser(userId: string): Promise<boolean> {
 		return await this.storage.delete(`user:${userId}`);
 	}
 
-	async saveUser(user: User): Promise<void> {
-		assert(v.is(UserSchema, user), "Invalid user object");
-		await this.storage.put(`user:${user.id}`, user);
+	public async saveUser(user: User): Promise<void> {
+		await this.storage.put(`user:${user.id}`, {
+			id: user.id,
+			name: user.getName(),
+		});
 	}
 }

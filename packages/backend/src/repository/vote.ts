@@ -1,5 +1,4 @@
 import { UserIdSchema } from "@ichibun/shared/schemas/user";
-import assert from "assert";
 import * as v from "valibot";
 
 export class VoteRepository {
@@ -10,8 +9,8 @@ export class VoteRepository {
 	}
 
 	public async putVote(userId: string, vote: number): Promise<void> {
-		assert(v.is(v.number(), vote), "Invalid vote data");
-		assert(v.is(UserIdSchema, userId), "Invalid user ID");
+		v.assert(v.number(), vote);
+		v.assert(UserIdSchema, userId);
 
 		await this.storage.put(`votes:${userId}`, vote);
 	}
@@ -19,7 +18,7 @@ export class VoteRepository {
 	public async getVote(userId: string): Promise<number | null> {
 		const vote = await this.storage.get(`votes:${userId}`);
 		if (vote) {
-			assert(v.is(v.number(), vote), "Invalid vote data in storage");
+			v.assert(v.number(), vote);
 			return vote;
 		}
 
