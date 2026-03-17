@@ -9,7 +9,11 @@
 		"shirohige11037",
 		"jintajinta"
 	],
-	"scripts": {},
+	"scripts": {
+		"backend": "pnpm -F 'backend'",
+		"frontend": "pnpm -F 'frontend'",
+		"shared": "pnpm -F 'shared'"
+	},
 	"dependencies": {
 		"valibot": "^1.2.0"
 	},
