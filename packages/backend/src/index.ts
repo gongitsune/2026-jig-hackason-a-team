@@ -1,17 +1,18 @@
-import { newWebSocketRpcSession } from "capnweb";
+import { Hono } from "hono";
 import { DurableObject } from "cloudflare:workers";
 import { drizzle, DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
 import { migrate } from "drizzle-orm/durable-sqlite/migrator";
 
 import migrations from "../drizzle/migrations";
-import { PublicApiImpl } from "./controller/publicApi";
 import { relations } from "./db/relations";
 import { AppState } from "./state";
+import { createRoomRouter } from "./routes/room";
 
 export class GameDO extends DurableObject<Env> {
 	private storage: DurableObjectStorage;
 	private db: DrizzleSqliteDODatabase<any>;
-	private sessions: Map<WebSocket, { [key: string]: string }>;
+	private app: Hono;
+	private subscriptions: Set<WebSocket>;
 	public readonly state: AppState;
 
 	constructor(ctx: DurableObjectState, env: Env) {
@@ -19,46 +20,28 @@ export class GameDO extends DurableObject<Env> {
 
 		this.storage = ctx.storage;
 		this.db = drizzle(this.storage, { logger: false, relations });
-
-		this.sessions = new Map();
-
+		this.subscriptions = new Set();
 		this.state = new AppState(this.db);
 
-		this.ctx.getWebSockets().forEach((ws) => {
-			let attachment = ws.deserializeAttachment();
-			if (attachment) {
-				this.sessions.set(ws, { ...attachment });
-			}
-		});
+		this.app = new Hono();
+		this.app.route("/", createRoomRouter(this.state));
 
 		this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair("ping", "pong"));
-
 		this.migrate();
 	}
 
-	fetch(_request: Request): Response {
-		const webSocketPair = new WebSocketPair();
-		const [client, server] = Object.values(webSocketPair);
+	fetch(request: Request): Promise<Response> | Response {
+		return this.app.fetch(request);
+	}
 
-		this.ctx.acceptWebSocket(server);
-
-		const id = crypto.randomUUID();
-		server.serializeAttachment({ id });
-
-		this.sessions.set(server, { id });
-
-		// capnwebのセッションを開始
-		newWebSocketRpcSession(server, new PublicApiImpl(this.state));
-
-		return new Response(null, {
-			status: 101,
-			webSocket: client,
-		});
+	webSocketMessage(_ws: WebSocket, _data: ArrayBuffer | string) {
+		// Handle WebSocket messages for subscriptions
+		// This will be used for real-time updates
 	}
 
 	webSocketClose(ws: WebSocket, code: number, reason: string, _wasClean: boolean) {
 		ws.close(code, reason);
-		this.sessions.delete(ws);
+		this.subscriptions.delete(ws);
 	}
 
 	private migrate() {
@@ -67,21 +50,21 @@ export class GameDO extends DurableObject<Env> {
 }
 
 export default {
-	fetch(request, env, _ctx): Promise<Response> {
+	fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(request.url);
-		const pattern = new URLPattern("/room/:passphrase");
+		const pattern = new URLPattern("/room/:passphrase/*");
 
 		const match = pattern.exec(url);
 		if (match) {
 			const { passphrase } = match.pathname.groups;
-
 			const stub = env.GAME_DO.getByName(passphrase);
 			return stub.fetch(request);
 		}
 
 		return Promise.resolve(
-			new Response(null, {
+			new Response(JSON.stringify({ error: "Not found" }), {
 				status: 404,
+				headers: { "Content-Type": "application/json" },
 			}),
 		);
 	},
