@@ -1,34 +1,139 @@
+import { Round } from "@backend/domain/round";
+import { Sentence } from "@backend/domain/sentence";
+import { User } from "@backend/domain/user";
+import { UserWord } from "@backend/domain/word";
+import { AppState } from "@backend/state";
 import { GameResult, RoomAPI, RoomStatus, SentenceToVote, UserInfo } from "@ichibun/shared/api";
+import {
+	IllegalOperationError,
+	InternalServerError,
+	RoomStatusNotValidError,
+} from "@ichibun/shared/error";
 
 export class RoomApiImpl implements RoomAPI {
-	getRoomStatus(): Promise<RoomStatus> {
-		throw new Error("Method not implemented.");
+	constructor(
+		private readonly state: AppState,
+		private readonly apiUser: User,
+	) {}
+
+	private getRoundAndAssertStatus(expectedStatus: RoomStatus): Round {
+		const round = this.state.roundRepository.getCurrentRound();
+
+		if (!round) {
+			throw new InternalServerError("No round found");
+		}
+
+		const actualStatus = round.getStatus();
+
+		if (actualStatus !== expectedStatus) {
+			throw new RoomStatusNotValidError(expectedStatus, actualStatus);
+		}
+
+		return round;
 	}
-	getTopic(): Promise<string> {
-		throw new Error("Method not implemented.");
+
+	getRoundStatus(): RoomStatus {
+		const round = this.state.roundRepository.getCurrentRound();
+		if (round) {
+			return round.getStatus();
+		}
+
+		throw new Error("No round found");
 	}
-	getLastResult(): Promise<GameResult | null> {
-		throw new Error("Method not implemented.");
+
+	getTopic(): string {
+		const round = this.state.roundRepository.getCurrentRound();
+		if (round) {
+			return round.topic.text;
+		}
+
+		throw new Error("No round found");
 	}
-	getUsers(): Promise<UserInfo[]> {
-		throw new Error("Method not implemented.");
+
+	getLastResult(): GameResult | null {
+		const currentRound = this.getRoundAndAssertStatus(RoomStatus.Waiting);
+		const results = this.state.gameResultRepository.getLastResult(currentRound.id - 1);
+
+		return results ? results : null;
 	}
-	getDistributedWords(): Promise<string[]> {
-		throw new Error("Method not implemented.");
+
+	getUsers(): UserInfo[] {
+		this.getRoundAndAssertStatus(RoomStatus.Waiting);
+
+		const usersWithPoint = this.state.userRepository.findAllUsersWithPoint();
+
+		return usersWithPoint.map(({ user, point }) => ({
+			userId: user.id,
+			name: user.getName(),
+			point,
+		}));
 	}
-	getSentencesToVote(): Promise<SentenceToVote[]> {
-		throw new Error("Method not implemented.");
+
+	getDistributedWords(): string[] {
+		const round = this.getRoundAndAssertStatus(RoomStatus.WordInputing);
+		const words = round.getWords()?.words.map((word) => word.word);
+
+		if (words) {
+			return words;
+		}
+
+		throw new InternalServerError("No distributed words found");
 	}
-	startGame(): Promise<void> {
-		throw new Error("Method not implemented.");
+
+	getSentencesToVote(): SentenceToVote[] {
+		const round = this.getRoundAndAssertStatus(RoomStatus.Voting);
+
+		const sentences = this.state.sentenceRepository.getSentencesByRoundId(round.id);
+		return sentences.map((sentence) => ({
+			userName: sentence.user.getName(),
+			sentence: sentence.sentence,
+		}));
 	}
-	submitWord(word: string): Promise<void> {
-		throw new Error("Method not implemented.");
+
+	startGame(): void {
+		const round = this.getRoundAndAssertStatus(RoomStatus.Waiting);
+
+		round.gotoWordInputting();
+		this.state.roundRepository.updateRound(round);
 	}
-	submitSentence(sentence: string): Promise<void> {
-		throw new Error("Method not implemented.");
+
+	submitWord(word: string): void {
+		const round = this.getRoundAndAssertStatus(RoomStatus.WordInputing);
+		const wordRepository = this.state.wordRepository;
+
+		if (wordRepository.getUserWordByUserId(round, this.apiUser.id)) {
+			throw new IllegalOperationError("User has already submitted a word");
+		}
+		const newUserWord = UserWord.create(word, this.apiUser.id, round.id);
+		wordRepository.addUserWord(newUserWord);
+
+		// 全員が単語を提出したか確認
+		const notSubmittedUserCount = wordRepository.countNotSubmittedUser(round);
+		if (notSubmittedUserCount === 0) {
+			const userWords = wordRepository.getUserWords(round);
+			round.gotoSentenceInputting(userWords);
+			this.state.roundRepository.updateRound(round);
+		}
 	}
-	submitVote(sentenceUserId: string): Promise<void> {
+
+	submitSentence(sentence: string): void {
+		const round = this.getRoundAndAssertStatus(RoomStatus.SentenceInputing);
+		const sentenceRepository = this.state.sentenceRepository;
+
+		if (sentenceRepository.getSentenceByUserId(round.id, this.apiUser.id)) {
+			throw new IllegalOperationError("User has already submitted a sentence");
+		}
+		const newSentence = Sentence.create(this.apiUser, sentence, round.id);
+		sentenceRepository.addSentence(newSentence);
+
+		// 全員が文章を提出したか確認
+		const notSubmittedUserCount = sentenceRepository.countNotSubmittedUser(round.id);
+		if (notSubmittedUserCount === 0) {
+			round.gotoVoting();
+			this.state.roundRepository.updateRound(round);
+		}
+	}
+	submitVote(_sentenceUserId: string): Promise<void> {
 		throw new Error("Method not implemented.");
 	}
 }

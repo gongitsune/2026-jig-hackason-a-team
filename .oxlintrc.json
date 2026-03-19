@@ -1,11 +1,17 @@
 {
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
-	"plugins": null,
-	"categories": {},
-	"rules": {},
+	"plugins": [],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn",
+		"pedantic": "warn"
+	},
+	"rules": {
+		"eslint/max-classes-per-file": "off"
+	},
 	"settings": {
 		"jsx-a11y": {
-			"polymorphicPropName": null,
+			"polymorphicPropName": "as",
 			"components": {},
 			"attributes": {}
 		},
@@ -38,4 +44,3 @@
 	"globals": {},
 	"ignorePatterns": []
 }
-

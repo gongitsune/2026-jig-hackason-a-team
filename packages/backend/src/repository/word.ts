@@ -1,39 +1,59 @@
-import { UserIdSchema } from "@ichibun/shared/schemas/user";
-import { WordSchema } from "@ichibun/shared/schemas/word";
-import * as v from "valibot";
-
-const UserWordsSchema = v.array(
-	v.object({
-		userId: UserIdSchema,
-		word: WordSchema,
-	}),
-);
-
-export type UserWords = v.InferInput<typeof UserWordsSchema>;
+import { usersTable, wordsTable } from "@backend/db/schema";
+import { Round } from "@backend/domain/round";
+import { SystemWord, UserWord } from "@backend/domain/word";
+import * as systemWords from "@backend/resources/words.json";
+import { and, count, eq, isNull } from "drizzle-orm";
+import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
 
 export class WordRepository {
-	private systemWords: string[] = [];
-	private storage: DurableObjectStorage;
+	constructor(private readonly db: DrizzleSqliteDODatabase) {}
 
-	constructor(storage: DurableObjectStorage) {
-		this.storage = storage;
+	public addUserWord(userWord: UserWord): void {
+		this.db
+			.insert(wordsTable)
+			.values({
+				word: userWord.word,
+				writerId: userWord.userId,
+				roundId: userWord.roundId,
+			})
+			.run();
 	}
 
-	public async updateUserWords(userWords: UserWords): Promise<void> {
-		v.assert(UserWordsSchema, userWords);
-		this.storage.put("words", userWords);
+	public getUserWords(round: Round): UserWord[] {
+		const res = this.db.select().from(wordsTable).where(eq(wordsTable.roundId, round.id)).all();
+		return res.map((row) => new UserWord(row.word, row.writerId, row.roundId));
 	}
 
-	public async getUserWords(): Promise<string[]> {
-		const words = await this.storage.get("words");
-		if (words) {
-			v.assert(UserWordsSchema, words);
-			return words.map((w) => w.word);
+	public getUserWordByUserId(round: Round, userId: string): UserWord | null {
+		const res = this.db
+			.select()
+			.from(wordsTable)
+			.where(and(eq(wordsTable.roundId, round.id), eq(wordsTable.writerId, userId)))
+			.get();
+
+		if (res) {
+			return new UserWord(res.word, res.writerId, res.roundId);
 		}
-		return [];
+		return null;
 	}
 
-	public getSystemWords(): ReadonlyArray<string> {
-		return this.systemWords;
+	public countNotSubmittedUser(round: Round): number {
+		const res = this.db
+			.select({
+				notSubmitted: count(usersTable.id),
+			})
+			.from(usersTable)
+			.leftJoin(
+				wordsTable,
+				and(eq(usersTable.id, wordsTable.writerId), eq(wordsTable.roundId, round.id)),
+			)
+			.where(isNull(wordsTable.id))
+			.get();
+
+		return res?.notSubmitted ?? 0;
+	}
+
+	public getSystemWords(): ReadonlyArray<SystemWord> {
+		return systemWords.map((w) => new SystemWord(w));
 	}
 }

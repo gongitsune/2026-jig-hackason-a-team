@@ -1,4 +1,6 @@
-import { Word } from "./word.js";
+import * as systemWords from "@backend/resources/words.json";
+
+import { SystemWord, UserWord } from "./word";
 
 function sampleN<T>(arr: T[], n: number): T[] {
 	const copy = [...arr];
@@ -12,15 +14,15 @@ function sampleN<T>(arr: T[], n: number): T[] {
 export class DistributedWords {
 	private static readonly WordCount = 10;
 
-	constructor(private readonly words: Word[]) {}
+	constructor(public readonly words: SystemWord[]) {}
 
-	public static create(allWords: Word[]): DistributedWords {
+	public static create(userWords: UserWord[]): DistributedWords {
+		const allWords = [
+			...userWords.map((w) => new SystemWord(w.word)),
+			...systemWords.map((w) => new SystemWord(w)),
+		];
 		const words = sampleN(allWords, DistributedWords.WordCount);
 
 		return new DistributedWords(words);
-	}
-
-	public getWords(): ReadonlyArray<Word> {
-		return this.words;
 	}
 }

@@ -1,62 +1,61 @@
+import assert from "assert";
+
 import { RoomStatus } from "@ichibun/shared/api";
 import { RoomStatusNotValidError, UserDupulicateError } from "@ichibun/shared/error";
 import { PassphraseSchema } from "@ichibun/shared/schemas/room";
-import { UserIdSchema } from "@ichibun/shared/schemas/user";
 import * as v from "valibot";
+
+import { Round } from "./round";
+import { User } from "./user";
 
 export class Room {
 	constructor(
 		public readonly passphrase: string,
-		private status: RoomStatus,
-		private users: string[],
+		private users: User[],
+		private rounds: Round[],
 	) {}
 
-	public static create(passphrase: string, status: RoomStatus, users: string[]): Room {
+	public static create(passphrase: string): Room {
 		v.assert(PassphraseSchema, passphrase);
-		v.assert(v.array(UserIdSchema), users);
 
-		return new Room(passphrase, status, users);
+		return new Room(passphrase, [], []);
 	}
 
-	public joinUser(userId: string): void {
-		if (this.status !== RoomStatus.Waiting) {
-			throw new RoomStatusNotValidError(this.status, RoomStatus.Waiting);
+	public getCurrentRound(): Round | null {
+		if (this.rounds.length === 0) {
+			return null;
 		}
-		if (this.users.includes(userId)) {
-			throw new UserDupulicateError(userId);
+		return this.rounds[this.rounds.length - 1];
+	}
+
+	public startRound(newRound: Round): void {
+		const currentRound = this.getCurrentRound();
+		if (currentRound !== null && currentRound.getStatus() !== RoomStatus.Voting) {
+			throw new RoomStatusNotValidError(currentRound.getStatus(), RoomStatus.Voting);
 		}
 
-		this.users.push(userId);
+		this.rounds.push(newRound);
+	}
+
+	public joinUser(user: User): void {
+		const round = this.getCurrentRound();
+		assert(round !== null, "Round must be created before joining a user");
+		if (round.getStatus() !== RoomStatus.Waiting) {
+			throw new RoomStatusNotValidError(round.getStatus(), RoomStatus.Waiting);
+		}
+		if (this.users.some((u) => u.id === user.id)) {
+			throw new UserDupulicateError(user.id);
+		}
+
+		this.users.push(user);
 	}
 
 	public leaveUser(userId: string): void {
-		if (this.status !== RoomStatus.Waiting) {
-			throw new RoomStatusNotValidError(this.status, RoomStatus.Waiting);
+		const round = this.getCurrentRound();
+		assert(round !== null, "Round must be created before joining a user");
+		if (round.getStatus() !== RoomStatus.Waiting) {
+			throw new RoomStatusNotValidError(round.getStatus(), RoomStatus.Waiting);
 		}
-		this.users = this.users.filter((id) => id !== userId);
-	}
-
-	public gotoWordInputting(): void {
-		if (this.status !== RoomStatus.Waiting) {
-			throw new RoomStatusNotValidError(this.status, RoomStatus.Waiting);
-		}
-
-		this.status = RoomStatus.WordInputing;
-	}
-
-	public gotoSentenceInputting(): void {
-		if (this.status !== RoomStatus.WordInputing) {
-			throw new RoomStatusNotValidError(this.status, RoomStatus.WordInputing);
-		}
-
-		this.status = RoomStatus.SentenceInputing;
-	}
-
-	public gotoVoting(): void {
-		if (this.status !== RoomStatus.SentenceInputing) {
-			throw new RoomStatusNotValidError(this.status, RoomStatus.SentenceInputing);
-		}
-
-		this.status = RoomStatus.Voting;
+		this.users = this.users.filter((u) => u.id !== userId);
 	}
 }

@@ -10,6 +10,13 @@ export class IllegalOperationError extends Error {
 	}
 }
 
+export class InternalServerError extends Error {
+	constructor(message?: string) {
+		super(message || "Internal server error");
+		this.name = "InternalServerError";
+	}
+}
+
 /**
  * ユーザー重複エラー
  */

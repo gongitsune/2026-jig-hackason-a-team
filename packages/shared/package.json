@@ -3,6 +3,19 @@
 	"version": "0.0.1",
 	"description": "",
 	"license": "MIT",
+	"typesVersions": {
+		"*": {
+			"schemas/*": [
+				"src/schemas/*.ts"
+			],
+			"api": [
+				"src/api.d.ts"
+			],
+			"error": [
+				"src/error.ts"
+			]
+		}
+	},
 	"exports": {
 		"./schemas/*": "./src/schemas/*.ts",
 		"./api": "./src/api.d.ts",

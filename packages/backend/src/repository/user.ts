@@ -1,35 +1,58 @@
-import * as v from "valibot";
+import { sentencesTable, usersTable, votesTable } from "@backend/db/schema.js";
 import { User } from "@backend/domain/user.js";
-import { UserIdSchema, UserNameSchema } from "@ichibun/shared/schemas/user";
+import { count, eq } from "drizzle-orm";
+import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
 
-const Schema = v.object({
-	id: UserIdSchema,
-	name: UserNameSchema,
-});
+type UserWithPoint = {
+	user: User;
+	point: number;
+};
 
 export class UserRepository {
-	private storage: DurableObjectStorage;
+	constructor(private readonly db: DrizzleSqliteDODatabase) {}
 
-	constructor(storage: DurableObjectStorage) {
-		this.storage = storage;
+	public insertUser(user: User): void {
+		this.db.insert(usersTable).values({ id: user.id, name: user.getName() }).run();
 	}
 
-	public async getUser(userId: string): Promise<User | null> {
-		const user = await this.storage.get(`user:${userId}`);
-		if (user && v.is(Schema, user)) {
+	public findUserById(userId: string): User | null {
+		const user = this.db.select().from(usersTable).where(eq(usersTable.id, userId)).get();
+
+		if (user) {
 			return new User(user.id, user.name);
 		}
 		return null;
 	}
 
-	public async deleteUser(userId: string): Promise<boolean> {
-		return await this.storage.delete(`user:${userId}`);
+	public findAllUsersWithPoint(): UserWithPoint[] {
+		const users = this.db
+			.select({
+				id: usersTable.id,
+				name: usersTable.name,
+				point: count(votesTable.id),
+			})
+			.from(usersTable)
+			.innerJoin(sentencesTable, eq(sentencesTable.writerId, usersTable.id))
+			.innerJoin(votesTable, eq(votesTable.sentenceId, sentencesTable.id))
+			.groupBy(usersTable.id)
+			.all();
+		return users.map((user) => ({
+			user: new User(user.id, user.name),
+			point: user.point,
+		}));
 	}
 
-	public async saveUser(user: User): Promise<void> {
-		await this.storage.put(`user:${user.id}`, {
-			id: user.id,
-			name: user.getName(),
-		});
+	public deleteUserById(userId: string): boolean {
+		const res = this.db.delete(usersTable).where(eq(usersTable.id, userId)).run();
+		return res.rowsWritten > 0;
+	}
+
+	public updateUser(userId: string, newUser: User): boolean {
+		const res = this.db
+			.update(usersTable)
+			.set({ name: newUser.getName() })
+			.where(eq(usersTable.id, userId))
+			.run();
+		return res.rowsWritten > 0;
 	}
 }
