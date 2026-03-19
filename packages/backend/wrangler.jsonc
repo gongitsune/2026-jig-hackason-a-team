@@ -6,7 +6,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "cf-backend",
 	"main": "src/index.ts",
-	"compatibility_date": "2026-03-12",
+	"compatibility_date": "2026-03-10",
 	"migrations": [
 		{
 			"new_sqlite_classes": ["GameDO"],

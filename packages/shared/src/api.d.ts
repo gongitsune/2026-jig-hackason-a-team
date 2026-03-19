@@ -15,6 +15,8 @@ export interface PublicAPI {
 	 * @throws {RoomStatusNotValidError} ルームがユーザの参加を許可していない状態の場合にスローされる。
 	 */
 	joinRoom(userId: string, userName: string): RoomAPI;
+
+	healthCheck(): string;
 }
 
 export interface RoomAPI {

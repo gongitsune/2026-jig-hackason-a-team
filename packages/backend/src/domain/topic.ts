@@ -1,4 +1,4 @@
-import * as topics from "@backend/resources/goals.json";
+import { topics } from "@backend/resources/topics";
 
 export class Topic {
 	constructor(public readonly text: string) {}

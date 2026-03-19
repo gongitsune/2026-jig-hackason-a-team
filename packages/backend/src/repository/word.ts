@@ -1,7 +1,6 @@
 import { usersTable, wordsTable } from "@backend/db/schema";
 import { Round } from "@backend/domain/round";
-import { SystemWord, UserWord } from "@backend/domain/word";
-import * as systemWords from "@backend/resources/words.json";
+import { UserWord } from "@backend/domain/word";
 import { and, count, eq, isNull } from "drizzle-orm";
 import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
 
@@ -51,9 +50,5 @@ export class WordRepository {
 			.get();
 
 		return res?.notSubmitted ?? 0;
-	}
-
-	public getSystemWords(): ReadonlyArray<SystemWord> {
-		return systemWords.map((w) => new SystemWord(w));
 	}
 }

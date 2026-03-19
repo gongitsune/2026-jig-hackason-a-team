@@ -1,4 +1,4 @@
-import * as systemWords from "@backend/resources/words.json";
+import { words as systemWords } from "@backend/resources/words";
 
 import { SystemWord, UserWord } from "./word";
 

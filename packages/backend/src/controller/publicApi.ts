@@ -9,6 +9,10 @@ import { RoomApiImpl } from "./roomApi";
 export class PublicApiImpl implements PublicAPI {
 	constructor(private readonly state: AppState) {}
 
+	healthCheck(): string {
+		return "OK";
+	}
+
 	joinRoom(userId: string, userName: string): RoomAPI {
 		const userRepository = this.state.userRepository;
 
