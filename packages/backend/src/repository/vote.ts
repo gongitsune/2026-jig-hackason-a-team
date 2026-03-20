@@ -7,7 +7,7 @@ export class VoteRepository {
 
 	public insertVote(vote: Vote): void {
 		this.db.insert(votesTable).values({
-			voterId: vote.userId,
+			userId: vote.userId,
 			sentenceId: vote.sentenceId,
 			roundId: vote.roundId,
 		});

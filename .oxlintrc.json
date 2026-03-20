@@ -7,9 +7,7 @@
 		"pedantic": "warn"
 	},
 	"rules": {
-		"eslint/max-classes-per-file": "off",
-		"eslint/max-lines-per-function": "off",
-		"eslint/max-lines": "off"
+		"eslint/max-classes-per-file": "off"
 	},
 	"settings": {
 		"jsx-a11y": {
