@@ -1,10 +1,11 @@
-import { roundsTable } from "@backend/db/schema";
-import { DistributedWords } from "@backend/domain/distributedWords";
-import { Round } from "@backend/domain/round";
-import { Topic } from "@backend/domain/topic";
-import { SystemWord } from "@backend/domain/word";
 import { eq, max } from "drizzle-orm";
 import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
+
+import { roundsTable } from "../db/schema";
+import { DistributedWords } from "../domain/distributedWords";
+import { Round } from "../domain/round";
+import { Topic } from "../domain/topic";
+import { SystemWord } from "../domain/word";
 
 export class RoundRepository {
 	constructor(private readonly db: DrizzleSqliteDODatabase) {}

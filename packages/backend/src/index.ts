@@ -61,6 +61,12 @@ export class GameDO extends DurableObject<Env> {
 		this.sessions.delete(ws);
 	}
 
+	webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): void | Promise<void> {
+		const state = ws.deserializeAttachment() as { id: string };
+	}
+
+	webSocketError(ws: WebSocket, error: unknown): void | Promise<void> {}
+
 	private migrate() {
 		migrate(this.db, migrations);
 	}
@@ -69,7 +75,7 @@ export class GameDO extends DurableObject<Env> {
 export default {
 	fetch(request, env, _ctx): Promise<Response> {
 		const url = new URL(request.url);
-		const pattern = new URLPattern("/room/:passphrase");
+		const pattern = new URLPattern({ pathname: "/room/:passphrase" });
 
 		const match = pattern.exec(url);
 		if (match) {

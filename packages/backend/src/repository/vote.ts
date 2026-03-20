@@ -1,13 +1,14 @@
-import { votesTable } from "@backend/db/schema";
-import { Vote } from "@backend/domain/vote";
 import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
+
+import { votesTable } from "../db/schema";
+import { Vote } from "../domain/vote";
 
 export class VoteRepository {
 	constructor(private readonly db: DrizzleSqliteDODatabase) {}
 
 	public insertVote(vote: Vote): void {
 		this.db.insert(votesTable).values({
-			userId: vote.userId,
+			voterId: vote.userId,
 			sentenceId: vote.sentenceId,
 			roundId: vote.roundId,
 		});

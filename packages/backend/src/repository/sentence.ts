@@ -1,8 +1,9 @@
-import { sentencesTable, usersTable } from "@backend/db/schema";
-import { Sentence } from "@backend/domain/sentence";
-import { User } from "@backend/domain/user";
 import { and, count, eq, isNull } from "drizzle-orm";
 import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
+
+import { sentencesTable, usersTable } from "../db/schema";
+import { Sentence } from "../domain/sentence";
+import { User } from "../domain/user";
 
 export class SentenceRepository {
 	constructor(private readonly db: DrizzleSqliteDODatabase) {}

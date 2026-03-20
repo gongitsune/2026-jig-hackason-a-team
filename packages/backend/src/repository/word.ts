@@ -1,8 +1,9 @@
-import { usersTable, wordsTable } from "@backend/db/schema";
-import { Round } from "@backend/domain/round";
-import { UserWord } from "@backend/domain/word";
 import { and, count, eq, isNull } from "drizzle-orm";
 import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
+
+import { usersTable, wordsTable } from "../db/schema";
+import { Round } from "../domain/round";
+import { UserWord } from "../domain/word";
 
 export class WordRepository {
 	constructor(private readonly db: DrizzleSqliteDODatabase) {}

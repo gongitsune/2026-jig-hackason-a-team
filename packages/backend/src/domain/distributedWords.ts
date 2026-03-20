@@ -1,5 +1,4 @@
-import { words as systemWords } from "@backend/resources/words";
-
+import { words as systemWords } from "../resources/words";
 import { SystemWord, UserWord } from "./word";
 
 function sampleN<T>(arr: T[], n: number): T[] {

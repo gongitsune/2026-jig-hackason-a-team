@@ -1,20 +1,24 @@
-import { Round } from "@backend/domain/round";
-import { Sentence } from "@backend/domain/sentence";
-import { User } from "@backend/domain/user";
-import { UserWord } from "@backend/domain/word";
-import { AppState } from "@backend/state";
 import { GameResult, RoomAPI, RoomStatus, SentenceToVote, UserInfo } from "@ichibun/shared/api";
 import {
 	IllegalOperationError,
 	InternalServerError,
 	RoomStatusNotValidError,
 } from "@ichibun/shared/error";
+import { RpcTarget } from "capnweb";
 
-export class RoomApiImpl implements RoomAPI {
+import { Round } from "../domain/round";
+import { Sentence } from "../domain/sentence";
+import { User } from "../domain/user";
+import { UserWord } from "../domain/word";
+import { AppState } from "../state";
+
+export class RoomApiImpl extends RpcTarget implements RoomAPI {
 	constructor(
 		private readonly state: AppState,
 		private readonly apiUser: User,
-	) {}
+	) {
+		super();
+	}
 
 	private getRoundAndAssertStatus(expectedStatus: RoomStatus): Round {
 		const round = this.state.roundRepository.getCurrentRound();

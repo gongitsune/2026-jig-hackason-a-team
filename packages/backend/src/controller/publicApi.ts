@@ -1,15 +1,19 @@
-import { Round } from "@backend/domain/round";
-import { User } from "@backend/domain/user";
-import { AppState } from "@backend/state";
 import { PublicAPI, RoomAPI } from "@ichibun/shared/api";
 import { UserDupulicateError } from "@ichibun/shared/error";
+import { RpcTarget } from "capnweb";
 
+import { Round } from "../domain/round";
+import { User } from "../domain/user";
+import { AppState } from "../state";
 import { RoomApiImpl } from "./roomApi";
 
-export class PublicApiImpl implements PublicAPI {
-	constructor(private readonly state: AppState) {}
+export class PublicApiImpl extends RpcTarget implements PublicAPI {
+	constructor(private readonly state: AppState) {
+		super();
+	}
 
 	healthCheck(): string {
+		console.log("Health check");
 		return "OK";
 	}
 

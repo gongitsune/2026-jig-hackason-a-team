@@ -1,7 +1,8 @@
-import { sentencesTable, usersTable, votesTable } from "@backend/db/schema.js";
-import { User } from "@backend/domain/user.js";
 import { count, eq } from "drizzle-orm";
 import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
+
+import { sentencesTable, usersTable, votesTable } from "../db/schema";
+import { User } from "../domain/user";
 
 type UserWithPoint = {
 	user: User;
