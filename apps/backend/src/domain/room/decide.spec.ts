@@ -25,7 +25,6 @@ const makeRoomWithUsers = (userCount: number): Room => {
 	);
 };
 
-// oxlint-disable-next-line max-lines-per-function
 describe("decide", () => {
 	it("ユーザーが部屋に参加", () => {
 		const room = makeRoomWithUsers(0);
@@ -90,11 +89,7 @@ describe("decide", () => {
 		const users = Array.from({ length: 2 }, (_, i) =>
 			User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 		);
-		const room = Room(
-			RoomCode("TEST"),
-			users,
-			WordInputPhase(RoundId(1), Topic("テストお題")),
-		);
+		const room = Room(RoomCode("TEST"), users, WordInputPhase(RoundId(1), Topic("テストお題")));
 		const newUser = User(UserId(crypto.randomUUID()), UserName("NewUser"));
 		const result = decide(room, { type: "Join", user: newUser });
 
@@ -127,11 +122,7 @@ describe("decide", () => {
 		const users = Array.from({ length: 2 }, (_, i) =>
 			User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 		);
-		const room = Room(
-			RoomCode("TEST"),
-			users,
-			WordInputPhase(RoundId(1), Topic("テストお題")),
-		);
+		const room = Room(RoomCode("TEST"), users, WordInputPhase(RoundId(1), Topic("テストお題")));
 		const result = decide(room, { type: "Leave", user: users[0] });
 
 		expect(result.type).toBe("Failure");
@@ -144,11 +135,7 @@ describe("decide", () => {
 			const users = Array.from({ length: 3 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
-			const room = Room(
-				RoomCode("TEST"),
-				users,
-				WordInputPhase(RoundId(1), Topic("テストお題")),
-			);
+			const room = Room(RoomCode("TEST"), users, WordInputPhase(RoundId(1), Topic("テストお題")));
 			const word = SubmittedWord(users[0].id, RoundId(1), Word("激安"));
 			const result = decide(room, {
 				type: "SubmitWord",
@@ -332,11 +319,7 @@ describe("decide", () => {
 			const users = Array.from({ length: 3 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
-			const room = Room(
-				RoomCode("TEST"),
-				users,
-				VotePhase(RoundId(1), Topic("テストお題")),
-			);
+			const room = Room(RoomCode("TEST"), users, VotePhase(RoundId(1), Topic("テストお題")));
 			const vote = Vote(users[0].id, RoundId(1), users[1].id);
 			const result = decide(room, {
 				type: "Vote",

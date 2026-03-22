@@ -42,5 +42,13 @@
 		"builtin": true
 	},
 	"globals": {},
-	"ignorePatterns": ["drizzle"]
+	"overrides": [
+		{
+			"files": ["**/*.spec.ts"],
+			"rules": {
+				"eslint/max-lines-per-function": "off",
+				"eslint/max-lines": "off"
+			}
+		}
+	]
 }

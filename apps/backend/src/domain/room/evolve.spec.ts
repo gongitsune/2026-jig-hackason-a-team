@@ -16,7 +16,6 @@ import { Topic } from "./value-objects/topic";
 import { Vote } from "./value-objects/vote";
 import { SubmittedWord, Word } from "./value-objects/word";
 
-// oxlint-disable-next-line max-lines-per-function
 describe("evolve", () => {
 	describe("UserJoined", () => {
 		it("ユーザーが部屋に追加される", () => {
@@ -94,11 +93,7 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Alice")),
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 			];
-			const room = Room(
-				RoomCode("TEST"),
-				users,
-				WordInputPhase(RoundId(1), Topic("テストお題")),
-			);
+			const room = Room(RoomCode("TEST"), users, WordInputPhase(RoundId(1), Topic("テストお題")));
 			const word = SubmittedWord(users[0].id, RoundId(1), Word("激安"));
 			const event: GameEvent = { type: "WordSubmitted", word };
 
@@ -119,11 +114,7 @@ describe("evolve", () => {
 			const word1 = SubmittedWord(users[0].id, RoundId(1), Word("激安"));
 			const word2 = SubmittedWord(users[1].id, RoundId(1), Word("ふにゃふにゃ"));
 
-			let room = Room(
-				RoomCode("TEST"),
-				users,
-				WordInputPhase(RoundId(1), Topic("テストお題")),
-			);
+			let room = Room(RoomCode("TEST"), users, WordInputPhase(RoundId(1), Topic("テストお題")));
 			room = evolve(room, { type: "WordSubmitted", word: word1 });
 			room = evolve(room, { type: "WordSubmitted", word: word2 });
 
@@ -254,11 +245,7 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Alice")),
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 			];
-			const room = Room(
-				RoomCode("TEST"),
-				users,
-				VotePhase(RoundId(1), Topic("テストお題")),
-			);
+			const room = Room(RoomCode("TEST"), users, VotePhase(RoundId(1), Topic("テストお題")));
 			const vote = Vote(users[0].id, RoundId(1), users[1].id);
 			const event: GameEvent = { type: "VoteSubmitted", vote };
 
@@ -280,11 +267,7 @@ describe("evolve", () => {
 			const vote1 = Vote(users[0].id, RoundId(1), users[1].id);
 			const vote2 = Vote(users[1].id, RoundId(1), users[2].id);
 
-			let room = Room(
-				RoomCode("TEST"),
-				users,
-				VotePhase(RoundId(1), Topic("テストお題")),
-			);
+			let room = Room(RoomCode("TEST"), users, VotePhase(RoundId(1), Topic("テストお題")));
 			room = evolve(room, { type: "VoteSubmitted", vote: vote1 });
 			room = evolve(room, { type: "VoteSubmitted", vote: vote2 });
 
