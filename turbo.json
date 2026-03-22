@@ -13,6 +13,12 @@
 		"format": {
 			"dependsOn": ["^format"]
 		},
+		"test": {
+			"dependsOn": ["^test"]
+		},
+		"coverage": {
+			"dependsOn": ["^coverage"]
+		},
 		"dev": {
 			"persistent": true,
 			"cache": false

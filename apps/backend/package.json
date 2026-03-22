@@ -1,0 +1,24 @@
+{
+	"name": "backend",
+	"type": "module",
+	"scripts": {
+		"dev": "wrangler dev",
+		"deploy": "wrangler deploy --minify",
+		"cf-typegen": "wrangler types types/worker-configuration.d.ts --env-interface CloudflareBindings",
+		"drizzle-gen": "drizzle-kit generate",
+		"lint": "oxlint --type-aware --fix",
+		"format": "oxfmt --write",
+		"check-types": "oxfmt --check && tsc --noEmit",
+		"test": "vitest",
+		"coverage": "vitest run --coverage"
+	},
+	"dependencies": {
+		"drizzle-orm": "1.0.0-beta.18-7eb39f0",
+		"hono": "^4.12.8"
+	},
+	"devDependencies": {
+		"@types/node": "^25.5.0",
+		"drizzle-kit": "1.0.0-beta.18-7eb39f0",
+		"wrangler": "^4.76.0"
+	}
+}

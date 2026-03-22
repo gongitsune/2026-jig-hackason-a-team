@@ -1,0 +1,334 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "946b07a8-8e52-48ec-88a7-7b680c97a1c4",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "ddl": [
+    {
+      "name": "rounds",
+      "entityType": "tables"
+    },
+    {
+      "name": "sentences",
+      "entityType": "tables"
+    },
+    {
+      "name": "users",
+      "entityType": "tables"
+    },
+    {
+      "name": "votes",
+      "entityType": "tables"
+    },
+    {
+      "name": "words",
+      "entityType": "tables"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "rounds"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "roundNumber",
+      "entityType": "columns",
+      "table": "rounds"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "rounds"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "topic",
+      "entityType": "columns",
+      "table": "rounds"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "writerId",
+      "entityType": "columns",
+      "table": "sentences"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "roundId",
+      "entityType": "columns",
+      "table": "sentences"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "sentence",
+      "entityType": "columns",
+      "table": "sentences"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "users"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "users"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "voterId",
+      "entityType": "columns",
+      "table": "votes"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "roundId",
+      "entityType": "columns",
+      "table": "votes"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "targetId",
+      "entityType": "columns",
+      "table": "votes"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "writerId",
+      "entityType": "columns",
+      "table": "words"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "roundId",
+      "entityType": "columns",
+      "table": "words"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "word",
+      "entityType": "columns",
+      "table": "words"
+    },
+    {
+      "columns": [
+        "writerId"
+      ],
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_sentences_writerId_users_id_fk",
+      "entityType": "fks",
+      "table": "sentences"
+    },
+    {
+      "columns": [
+        "roundId"
+      ],
+      "tableTo": "rounds",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_sentences_roundId_rounds_id_fk",
+      "entityType": "fks",
+      "table": "sentences"
+    },
+    {
+      "columns": [
+        "voterId"
+      ],
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_votes_voterId_users_id_fk",
+      "entityType": "fks",
+      "table": "votes"
+    },
+    {
+      "columns": [
+        "roundId"
+      ],
+      "tableTo": "rounds",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_votes_roundId_rounds_id_fk",
+      "entityType": "fks",
+      "table": "votes"
+    },
+    {
+      "columns": [
+        "targetId"
+      ],
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_votes_targetId_users_id_fk",
+      "entityType": "fks",
+      "table": "votes"
+    },
+    {
+      "columns": [
+        "writerId"
+      ],
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_words_writerId_users_id_fk",
+      "entityType": "fks",
+      "table": "words"
+    },
+    {
+      "columns": [
+        "roundId"
+      ],
+      "tableTo": "rounds",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_words_roundId_rounds_id_fk",
+      "entityType": "fks",
+      "table": "words"
+    },
+    {
+      "columns": [
+        "writerId",
+        "roundId"
+      ],
+      "nameExplicit": false,
+      "name": "sentences_pk",
+      "entityType": "pks",
+      "table": "sentences"
+    },
+    {
+      "columns": [
+        "voterId",
+        "roundId"
+      ],
+      "nameExplicit": false,
+      "name": "votes_pk",
+      "entityType": "pks",
+      "table": "votes"
+    },
+    {
+      "columns": [
+        "writerId",
+        "roundId"
+      ],
+      "nameExplicit": false,
+      "name": "words_pk",
+      "entityType": "pks",
+      "table": "words"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "rounds_pk",
+      "table": "rounds",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "users_pk",
+      "table": "users",
+      "entityType": "pks"
+    }
+  ],
+  "renames": []
+}
