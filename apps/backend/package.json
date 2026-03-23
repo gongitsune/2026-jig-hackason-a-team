@@ -17,6 +17,7 @@
 		"hono": "^4.12.8"
 	},
 	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.13.3",
 		"@types/node": "^25.5.0",
 		"drizzle-kit": "1.0.0-beta.18-7eb39f0",
 		"wrangler": "^4.76.0"

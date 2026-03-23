@@ -1,14 +1,10 @@
 import { and, count, eq, desc } from "drizzle-orm";
 import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
 
-import {
-	roundsTable,
-	sentencesTable,
-	usersTable,
-	votesTable,
-	wordsTable,
-} from "../../../db/schema";
-import { User, UserId, UserName } from "../../user/user";
+import { roundsTable, sentencesTable, usersTable, votesTable, wordsTable } from "../../db/schema";
+import { topics } from "../../resources/topics";
+import { systemWords } from "../../resources/words";
+import { User, UserId, UserName } from "../user/user";
 import {
 	GamePhase,
 	ResultPhase,
@@ -16,19 +12,22 @@ import {
 	VotePhase,
 	WaitingPhase,
 	WordInputPhase,
-} from "../value-objects/game-phase";
-import { GameResult, UserResult } from "../value-objects/game-result";
-import { Room, RoomCode } from "../value-objects/room";
-import { RoundId } from "../value-objects/round";
-import { Sentence } from "../value-objects/sentence";
-import { Topic } from "../value-objects/topic";
-import { Vote } from "../value-objects/vote";
-import { SubmittedWord, Word } from "../value-objects/word";
+} from "./value-objects/game-phase";
+import { GameResult, UserResult } from "./value-objects/game-result";
+import { Room, RoomCode } from "./value-objects/room";
+import { RoundId } from "./value-objects/round";
+import { Sentence } from "./value-objects/sentence";
+import { Topic } from "./value-objects/topic";
+import { Vote } from "./value-objects/vote";
+import { SubmittedWord, Word } from "./value-objects/word";
 
 export type RoomRepository = {
 	load: (code: RoomCode) => Room | null;
 	save: (room: Room) => void;
 };
+
+export const loadTopics = () => topics;
+export const loadSystemWords = () => systemWords;
 
 // oxlint-disable-next-line eslint/max-lines-per-function
 export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository => {
