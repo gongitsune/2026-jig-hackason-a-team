@@ -49,9 +49,9 @@ const voteSubmitted: EventHandler<"VoteSubmitted"> = (room, event) => {
 	assert(room.phase.tag === "Voting");
 	return updateRoomPhase(room, addVoteToVotePhase(room.phase, event.vote));
 };
-const roundEnded: EventHandler<"RoundEnded"> = (room, _event) => {
+const roundEnded: EventHandler<"RoundEnded"> = (room, event) => {
 	assert(room.phase.tag === "Voting");
-	return updateRoomPhase(room, ResultPhase());
+	return updateRoomPhase(room, ResultPhase(event.roundId));
 };
 
 export const evolve = (room: Room, event: GameEvent): Room => {

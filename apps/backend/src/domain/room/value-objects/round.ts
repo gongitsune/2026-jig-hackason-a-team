@@ -2,7 +2,7 @@ import * as v from "valibot";
 
 import { Topic, TopicSchema } from "./topic";
 
-export const RoundIdSchema = v.pipe(v.number(), v.brand("RoundId"));
+export const RoundIdSchema = v.pipe(v.string(), v.brand("RoundId"));
 export const RoundStatusList = [
 	"Waiting",
 	"WordInputting",
@@ -26,7 +26,7 @@ export type RoundId = v.InferOutput<typeof RoundIdSchema>;
 export type RoundStatus = v.InferOutput<typeof RoundStatusSchema>;
 export type Round = v.InferOutput<typeof RoundSchema>;
 
-export const RoundId = (id: number) => v.parse(RoundIdSchema, id);
+export const RoundId = (id: string) => v.parse(RoundIdSchema, id);
 export const RoundStatus = (status: string) => v.parse(RoundStatusSchema, status);
 export const Round = (id: RoundId, roundNumber: number, topic: Topic, status: RoundStatus) =>
 	v.parse(RoundSchema, { id, roundNumber, topic, status });

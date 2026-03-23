@@ -126,6 +126,7 @@ const voting = (room: Room, vote: Vote): DecideResult => {
 	if (room.phase.submitted.length + 1 === room.users.length) {
 		const allVotesSubmittedEvent = {
 			type: "RoundEnded",
+			roundId: room.phase.roundId,
 		} satisfies GameEvent;
 		return success([voteSubmittedEvent, allVotesSubmittedEvent]);
 	}

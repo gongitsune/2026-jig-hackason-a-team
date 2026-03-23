@@ -22,7 +22,7 @@ export type GameEvent =
 	| { type: "SentenceSubmitted"; sentence: Sentence }
 	| { type: "AllSentencesSubmitted"; roundId: RoundId }
 	| { type: "VoteSubmitted"; vote: Vote }
-	| { type: "RoundEnded" };
+	| { type: "RoundEnded"; roundId: RoundId };
 
 export type DecideResult =
 	| { type: "Success"; events: GameEvent[] }

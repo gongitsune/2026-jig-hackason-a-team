@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "946b07a8-8e52-48ec-88a7-7b680c97a1c4",
+  "id": "312a7656-d49e-4377-b27a-6c7f75d23a02",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -52,7 +52,7 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "status",
+      "name": "phase",
       "entityType": "columns",
       "table": "rounds"
     },
@@ -68,6 +68,16 @@
     },
     {
       "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "distributedWords",
+      "entityType": "columns",
+      "table": "rounds"
+    },
+    {
+      "type": "text",
       "notNull": true,
       "autoincrement": false,
       "default": null,
@@ -77,7 +87,7 @@
       "table": "sentences"
     },
     {
-      "type": "integer",
+      "type": "text",
       "notNull": true,
       "autoincrement": false,
       "default": null,
@@ -127,7 +137,7 @@
       "table": "votes"
     },
     {
-      "type": "integer",
+      "type": "text",
       "notNull": true,
       "autoincrement": false,
       "default": null,
@@ -157,7 +167,7 @@
       "table": "words"
     },
     {
-      "type": "integer",
+      "type": "text",
       "notNull": true,
       "autoincrement": false,
       "default": null,

@@ -73,7 +73,7 @@ describe("evolve", () => {
 			];
 			const room = Room(RoomCode("TEST"), users, WaitingPhase());
 			const topic = Topic("世界で一番食べたくないもの");
-			const roundId = RoundId(1);
+			const roundId = RoundId("test-round");
 			const event: GameEvent = { type: "GameStarted", topic, roundId };
 
 			const newRoom = evolve(room, event);
@@ -93,8 +93,12 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Alice")),
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 			];
-			const room = Room(RoomCode("TEST"), users, WordInputPhase(RoundId(1), Topic("テストお題")));
-			const word = SubmittedWord(users[0].id, RoundId(1), Word("激安"));
+			const room = Room(
+				RoomCode("TEST"),
+				users,
+				WordInputPhase(RoundId("test-round"), Topic("テストお題")),
+			);
+			const word = SubmittedWord(users[0].id, RoundId("test-round"), Word("激安"));
 			const event: GameEvent = { type: "WordSubmitted", word };
 
 			const newRoom = evolve(room, event);
@@ -111,10 +115,14 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Alice")),
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 			];
-			const word1 = SubmittedWord(users[0].id, RoundId(1), Word("激安"));
-			const word2 = SubmittedWord(users[1].id, RoundId(1), Word("ふにゃふにゃ"));
+			const word1 = SubmittedWord(users[0].id, RoundId("test-round"), Word("激安"));
+			const word2 = SubmittedWord(users[1].id, RoundId("test-round"), Word("ふにゃふにゃ"));
 
-			let room = Room(RoomCode("TEST"), users, WordInputPhase(RoundId(1), Topic("テストお題")));
+			let room = Room(
+				RoomCode("TEST"),
+				users,
+				WordInputPhase(RoundId("test-round"), Topic("テストお題")),
+			);
 			room = evolve(room, { type: "WordSubmitted", word: word1 });
 			room = evolve(room, { type: "WordSubmitted", word: word2 });
 
@@ -133,17 +141,17 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Alice")),
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 			];
-			const word1 = SubmittedWord(users[0].id, RoundId(1), Word("激安"));
-			const word2 = SubmittedWord(users[1].id, RoundId(1), Word("ふにゃふにゃ"));
+			const word1 = SubmittedWord(users[0].id, RoundId("test-round"), Word("激安"));
+			const word2 = SubmittedWord(users[1].id, RoundId("test-round"), Word("ふにゃふにゃ"));
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				WordInputPhase(RoundId(1), Topic("テストお題"), [word1, word2]),
+				WordInputPhase(RoundId("test-round"), Topic("テストお題"), [word1, word2]),
 			);
 			const distributedWords = [Word("激安"), Word("ふにゃふにゃ"), Word("生"), Word("炒め")];
 			const event: GameEvent = {
 				type: "AllWordsSubmitted",
-				roundId: RoundId(1),
+				roundId: RoundId("test-round"),
 				distributedWords,
 			};
 
@@ -151,7 +159,7 @@ describe("evolve", () => {
 
 			expect(newRoom.phase.tag).toBe("SentenceInputting");
 			if (newRoom.phase.tag === "SentenceInputting") {
-				expect(newRoom.phase.roundId).toEqual(RoundId(1));
+				expect(newRoom.phase.roundId).toEqual(RoundId("test-round"));
 				expect(newRoom.phase.topic).toBe(Topic("テストお題"));
 				expect(newRoom.phase.distributedWords).toEqual(distributedWords);
 				expect(newRoom.phase.submitted.length).toBe(0);
@@ -169,9 +177,9 @@ describe("evolve", () => {
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				SentenceInputPhase(RoundId(1), Topic("テストお題"), distributedWords),
+				SentenceInputPhase(RoundId("test-round"), Topic("テストお題"), distributedWords),
 			);
-			const sentence = Sentence(users[0].id, RoundId(1), "激安ふにゃふにゃ生炒め");
+			const sentence = Sentence(users[0].id, RoundId("test-round"), "激安ふにゃふにゃ生炒め");
 			const event: GameEvent = { type: "SentenceSubmitted", sentence };
 
 			const newRoom = evolve(room, event);
@@ -189,13 +197,17 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 			];
 			const distributedWords = [Word("激安"), Word("ふにゃふにゃ"), Word("生"), Word("炒め")];
-			const sentence1 = Sentence(users[0].id, RoundId(1), "激安ふにゃふにゃ生炒め");
-			const sentence2 = Sentence(users[1].id, RoundId(1), "激安の生肉をふにゃふにゃに炒めたの");
+			const sentence1 = Sentence(users[0].id, RoundId("test-round"), "激安ふにゃふにゃ生炒め");
+			const sentence2 = Sentence(
+				users[1].id,
+				RoundId("test-round"),
+				"激安の生肉をふにゃふにゃに炒めたの",
+			);
 
 			let room = Room(
 				RoomCode("TEST"),
 				users,
-				SentenceInputPhase(RoundId(1), Topic("テストお題"), distributedWords),
+				SentenceInputPhase(RoundId("test-round"), Topic("テストお題"), distributedWords),
 			);
 			room = evolve(room, { type: "SentenceSubmitted", sentence: sentence1 });
 			room = evolve(room, { type: "SentenceSubmitted", sentence: sentence2 });
@@ -216,23 +228,27 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 			];
 			const distributedWords = [Word("激安"), Word("ふにゃふにゃ"), Word("生"), Word("炒め")];
-			const sentence1 = Sentence(users[0].id, RoundId(1), "激安ふにゃふにゃ生炒め");
-			const sentence2 = Sentence(users[1].id, RoundId(1), "激安の生肉をふにゃふにゃに炒めたの");
+			const sentence1 = Sentence(users[0].id, RoundId("test-round"), "激安ふにゃふにゃ生炒め");
+			const sentence2 = Sentence(
+				users[1].id,
+				RoundId("test-round"),
+				"激安の生肉をふにゃふにゃに炒めたの",
+			);
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				SentenceInputPhase(RoundId(1), Topic("テストお題"), distributedWords, [
+				SentenceInputPhase(RoundId("test-round"), Topic("テストお題"), distributedWords, [
 					sentence1,
 					sentence2,
 				]),
 			);
-			const event: GameEvent = { type: "AllSentencesSubmitted", roundId: RoundId(1) };
+			const event: GameEvent = { type: "AllSentencesSubmitted", roundId: RoundId("test-round") };
 
 			const newRoom = evolve(room, event);
 
 			expect(newRoom.phase.tag).toBe("Voting");
 			if (newRoom.phase.tag === "Voting") {
-				expect(newRoom.phase.roundId).toEqual(RoundId(1));
+				expect(newRoom.phase.roundId).toEqual(RoundId("test-round"));
 				expect(newRoom.phase.topic).toBe(Topic("テストお題"));
 				expect(newRoom.phase.submitted.length).toBe(0);
 			}
@@ -245,8 +261,12 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Alice")),
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 			];
-			const room = Room(RoomCode("TEST"), users, VotePhase(RoundId(1), Topic("テストお題")));
-			const vote = Vote(users[0].id, RoundId(1), users[1].id);
+			const room = Room(
+				RoomCode("TEST"),
+				users,
+				VotePhase(RoundId("test-round"), Topic("テストお題")),
+			);
+			const vote = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const event: GameEvent = { type: "VoteSubmitted", vote };
 
 			const newRoom = evolve(room, event);
@@ -264,10 +284,14 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 				User(UserId(crypto.randomUUID()), UserName("Charlie")),
 			];
-			const vote1 = Vote(users[0].id, RoundId(1), users[1].id);
-			const vote2 = Vote(users[1].id, RoundId(1), users[2].id);
+			const vote1 = Vote(users[0].id, RoundId("test-round"), users[1].id);
+			const vote2 = Vote(users[1].id, RoundId("test-round"), users[2].id);
 
-			let room = Room(RoomCode("TEST"), users, VotePhase(RoundId(1), Topic("テストお題")));
+			let room = Room(
+				RoomCode("TEST"),
+				users,
+				VotePhase(RoundId("test-round"), Topic("テストお題")),
+			);
 			room = evolve(room, { type: "VoteSubmitted", vote: vote1 });
 			room = evolve(room, { type: "VoteSubmitted", vote: vote2 });
 
@@ -286,18 +310,21 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Alice")),
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 			];
-			const vote1 = Vote(users[0].id, RoundId(1), users[1].id);
-			const vote2 = Vote(users[1].id, RoundId(1), users[0].id);
+			const vote1 = Vote(users[0].id, RoundId("test-round"), users[1].id);
+			const vote2 = Vote(users[1].id, RoundId("test-round"), users[0].id);
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				VotePhase(RoundId(1), Topic("テストお題"), [vote1, vote2]),
+				VotePhase(RoundId("test-round"), Topic("テストお題"), [vote1, vote2]),
 			);
-			const event: GameEvent = { type: "RoundEnded" };
+			const event: GameEvent = { type: "RoundEnded", roundId: RoundId("test-round") };
 
 			const newRoom = evolve(room, event);
 
 			expect(newRoom.phase.tag).toBe("Result");
+			if (newRoom.phase.tag === "Result") {
+				expect(newRoom.phase.roundId).toEqual(RoundId("test-round"));
+			}
 		});
 	});
 
@@ -319,13 +346,13 @@ describe("evolve", () => {
 			room = evolve(room, {
 				type: "GameStarted",
 				topic: Topic("テストお題"),
-				roundId: RoundId(1),
+				roundId: RoundId("test-round"),
 			});
 			expect(room.phase.tag).toBe("WordInputting");
 
 			// 単語提出
-			const word1 = SubmittedWord(user1.id, RoundId(1), Word("激安"));
-			const word2 = SubmittedWord(user2.id, RoundId(1), Word("ふにゃふにゃ"));
+			const word1 = SubmittedWord(user1.id, RoundId("test-round"), Word("激安"));
+			const word2 = SubmittedWord(user2.id, RoundId("test-round"), Word("ふにゃふにゃ"));
 			room = evolve(room, { type: "WordSubmitted", word: word1 });
 			room = evolve(room, { type: "WordSubmitted", word: word2 });
 
@@ -333,29 +360,33 @@ describe("evolve", () => {
 			const distributedWords = [Word("激安"), Word("ふにゃふにゃ"), Word("生"), Word("炒め")];
 			room = evolve(room, {
 				type: "AllWordsSubmitted",
-				roundId: RoundId(1),
+				roundId: RoundId("test-round"),
 				distributedWords,
 			});
 			expect(room.phase.tag).toBe("SentenceInputting");
 
 			// 文章提出
-			const sentence1 = Sentence(user1.id, RoundId(1), "激安ふにゃふにゃ生炒め");
-			const sentence2 = Sentence(user2.id, RoundId(1), "激安の生肉をふにゃふにゃに炒めたの");
+			const sentence1 = Sentence(user1.id, RoundId("test-round"), "激安ふにゃふにゃ生炒め");
+			const sentence2 = Sentence(
+				user2.id,
+				RoundId("test-round"),
+				"激安の生肉をふにゃふにゃに炒めたの",
+			);
 			room = evolve(room, { type: "SentenceSubmitted", sentence: sentence1 });
 			room = evolve(room, { type: "SentenceSubmitted", sentence: sentence2 });
 
 			// 投票フェーズへ
-			room = evolve(room, { type: "AllSentencesSubmitted", roundId: RoundId(1) });
+			room = evolve(room, { type: "AllSentencesSubmitted", roundId: RoundId("test-round") });
 			expect(room.phase.tag).toBe("Voting");
 
 			// 投票
-			const vote1 = Vote(user1.id, RoundId(1), user2.id);
-			const vote2 = Vote(user2.id, RoundId(1), user1.id);
+			const vote1 = Vote(user1.id, RoundId("test-round"), user2.id);
+			const vote2 = Vote(user2.id, RoundId("test-round"), user1.id);
 			room = evolve(room, { type: "VoteSubmitted", vote: vote1 });
 			room = evolve(room, { type: "VoteSubmitted", vote: vote2 });
 
 			// ラウンド終了
-			room = evolve(room, { type: "RoundEnded" });
+			room = evolve(room, { type: "RoundEnded", roundId: RoundId("test-round") });
 			expect(room.phase.tag).toBe("Result");
 		});
 	});

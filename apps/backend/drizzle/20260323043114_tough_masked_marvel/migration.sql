@@ -1,13 +1,14 @@
 CREATE TABLE `rounds` (
 	`id` text PRIMARY KEY,
 	`roundNumber` integer NOT NULL,
-	`status` text NOT NULL,
-	`topic` text NOT NULL
+	`phase` text NOT NULL,
+	`topic` text NOT NULL,
+	`distributedWords` text
 );
 --> statement-breakpoint
 CREATE TABLE `sentences` (
 	`writerId` text NOT NULL,
-	`roundId` integer NOT NULL,
+	`roundId` text NOT NULL,
 	`sentence` text NOT NULL,
 	CONSTRAINT `sentences_pk` PRIMARY KEY(`writerId`, `roundId`),
 	CONSTRAINT `fk_sentences_writerId_users_id_fk` FOREIGN KEY (`writerId`) REFERENCES `users`(`id`) ON DELETE CASCADE,
@@ -21,7 +22,7 @@ CREATE TABLE `users` (
 --> statement-breakpoint
 CREATE TABLE `votes` (
 	`voterId` text NOT NULL,
-	`roundId` integer NOT NULL,
+	`roundId` text NOT NULL,
 	`targetId` text NOT NULL,
 	CONSTRAINT `votes_pk` PRIMARY KEY(`voterId`, `roundId`),
 	CONSTRAINT `fk_votes_voterId_users_id_fk` FOREIGN KEY (`voterId`) REFERENCES `users`(`id`) ON DELETE CASCADE,
@@ -31,7 +32,7 @@ CREATE TABLE `votes` (
 --> statement-breakpoint
 CREATE TABLE `words` (
 	`writerId` text NOT NULL,
-	`roundId` integer NOT NULL,
+	`roundId` text NOT NULL,
 	`word` text NOT NULL,
 	CONSTRAINT `words_pk` PRIMARY KEY(`writerId`, `roundId`),
 	CONSTRAINT `fk_words_writerId_users_id_fk` FOREIGN KEY (`writerId`) REFERENCES `users`(`id`) ON DELETE CASCADE,

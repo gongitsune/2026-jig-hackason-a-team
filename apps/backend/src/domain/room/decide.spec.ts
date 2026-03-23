@@ -65,7 +65,7 @@ describe("decide", () => {
 		const result = decide(room, {
 			type: "StartGame",
 			topic: Topic("一番食べたくないもの"),
-			roundId: RoundId(1),
+			roundId: RoundId("test-round"),
 		});
 		expect(result.type).toBe("Success");
 		if (result.type === "Failure") return;
@@ -78,7 +78,7 @@ describe("decide", () => {
 		const result = decide(room, {
 			type: "StartGame",
 			topic: Topic("一番食べたくないもの"),
-			roundId: RoundId(1),
+			roundId: RoundId("test-round"),
 		});
 		expect(result.type).toBe("Failure");
 		if (result.type === "Success") return;
@@ -89,7 +89,11 @@ describe("decide", () => {
 		const users = Array.from({ length: 2 }, (_, i) =>
 			User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 		);
-		const room = Room(RoomCode("TEST"), users, WordInputPhase(RoundId(1), Topic("テストお題")));
+		const room = Room(
+			RoomCode("TEST"),
+			users,
+			WordInputPhase(RoundId("test-round"), Topic("テストお題")),
+		);
 		const newUser = User(UserId(crypto.randomUUID()), UserName("NewUser"));
 		const result = decide(room, { type: "Join", user: newUser });
 
@@ -122,7 +126,11 @@ describe("decide", () => {
 		const users = Array.from({ length: 2 }, (_, i) =>
 			User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 		);
-		const room = Room(RoomCode("TEST"), users, WordInputPhase(RoundId(1), Topic("テストお題")));
+		const room = Room(
+			RoomCode("TEST"),
+			users,
+			WordInputPhase(RoundId("test-round"), Topic("テストお題")),
+		);
 		const result = decide(room, { type: "Leave", user: users[0] });
 
 		expect(result.type).toBe("Failure");
@@ -135,8 +143,12 @@ describe("decide", () => {
 			const users = Array.from({ length: 3 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
-			const room = Room(RoomCode("TEST"), users, WordInputPhase(RoundId(1), Topic("テストお題")));
-			const word = SubmittedWord(users[0].id, RoundId(1), Word("激安"));
+			const room = Room(
+				RoomCode("TEST"),
+				users,
+				WordInputPhase(RoundId("test-round"), Topic("テストお題")),
+			);
+			const word = SubmittedWord(users[0].id, RoundId("test-round"), Word("激安"));
 			const result = decide(room, {
 				type: "SubmitWord",
 				word,
@@ -153,13 +165,13 @@ describe("decide", () => {
 			const users = Array.from({ length: 2 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
-			const word1 = SubmittedWord(users[0].id, RoundId(1), Word("激安"));
+			const word1 = SubmittedWord(users[0].id, RoundId("test-round"), Word("激安"));
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				WordInputPhase(RoundId(1), Topic("テストお題"), [word1]),
+				WordInputPhase(RoundId("test-round"), Topic("テストお題"), [word1]),
 			);
-			const word2 = SubmittedWord(users[1].id, RoundId(1), Word("ふにゃふにゃ"));
+			const word2 = SubmittedWord(users[1].id, RoundId("test-round"), Word("ふにゃふにゃ"));
 			const systemWords = [
 				Word("生"),
 				Word("炒め"),
@@ -192,13 +204,13 @@ describe("decide", () => {
 			const users = Array.from({ length: 2 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
-			const word1 = SubmittedWord(users[0].id, RoundId(1), Word("激安"));
+			const word1 = SubmittedWord(users[0].id, RoundId("test-round"), Word("激安"));
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				WordInputPhase(RoundId(1), Topic("テストお題"), [word1]),
+				WordInputPhase(RoundId("test-round"), Topic("テストお題"), [word1]),
 			);
-			const word2 = SubmittedWord(users[0].id, RoundId(1), Word("ふにゃふにゃ"));
+			const word2 = SubmittedWord(users[0].id, RoundId("test-round"), Word("ふにゃふにゃ"));
 			const result = decide(room, {
 				type: "SubmitWord",
 				word: word2,
@@ -215,7 +227,7 @@ describe("decide", () => {
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
 			const room = Room(RoomCode("TEST"), users, WaitingPhase());
-			const word = SubmittedWord(users[0].id, RoundId(1), Word("激安"));
+			const word = SubmittedWord(users[0].id, RoundId("test-round"), Word("激安"));
 			const result = decide(room, {
 				type: "SubmitWord",
 				word,
@@ -237,9 +249,9 @@ describe("decide", () => {
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				SentenceInputPhase(RoundId(1), Topic("テストお題"), distributedWords),
+				SentenceInputPhase(RoundId("test-round"), Topic("テストお題"), distributedWords),
 			);
-			const sentence = Sentence(users[0].id, RoundId(1), "激安ふにゃふにゃ生炒め");
+			const sentence = Sentence(users[0].id, RoundId("test-round"), "激安ふにゃふにゃ生炒め");
 			const result = decide(room, {
 				type: "SubmitSentence",
 				sentence,
@@ -256,13 +268,19 @@ describe("decide", () => {
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
 			const distributedWords = [Word("激安"), Word("ふにゃふにゃ"), Word("生"), Word("炒め")];
-			const sentence1 = Sentence(users[0].id, RoundId(1), "激安ふにゃふにゃ生炒め");
+			const sentence1 = Sentence(users[0].id, RoundId("test-round"), "激安ふにゃふにゃ生炒め");
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				SentenceInputPhase(RoundId(1), Topic("テストお題"), distributedWords, [sentence1]),
+				SentenceInputPhase(RoundId("test-round"), Topic("テストお題"), distributedWords, [
+					sentence1,
+				]),
 			);
-			const sentence2 = Sentence(users[1].id, RoundId(1), "激安の生肉をふにゃふにゃに炒めたの");
+			const sentence2 = Sentence(
+				users[1].id,
+				RoundId("test-round"),
+				"激安の生肉をふにゃふにゃに炒めたの",
+			);
 			const result = decide(room, {
 				type: "SubmitSentence",
 				sentence: sentence2,
@@ -280,13 +298,15 @@ describe("decide", () => {
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
 			const distributedWords = [Word("激安"), Word("ふにゃふにゃ"), Word("生"), Word("炒め")];
-			const sentence1 = Sentence(users[0].id, RoundId(1), "激安ふにゃふにゃ生炒め");
+			const sentence1 = Sentence(users[0].id, RoundId("test-round"), "激安ふにゃふにゃ生炒め");
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				SentenceInputPhase(RoundId(1), Topic("テストお題"), distributedWords, [sentence1]),
+				SentenceInputPhase(RoundId("test-round"), Topic("テストお題"), distributedWords, [
+					sentence1,
+				]),
 			);
-			const sentence2 = Sentence(users[0].id, RoundId(1), "別の文章");
+			const sentence2 = Sentence(users[0].id, RoundId("test-round"), "別の文章");
 			const result = decide(room, {
 				type: "SubmitSentence",
 				sentence: sentence2,
@@ -302,7 +322,7 @@ describe("decide", () => {
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
 			const room = Room(RoomCode("TEST"), users, WaitingPhase());
-			const sentence = Sentence(users[0].id, RoundId(1), "激安ふにゃふにゃ生炒め");
+			const sentence = Sentence(users[0].id, RoundId("test-round"), "激安ふにゃふにゃ生炒め");
 			const result = decide(room, {
 				type: "SubmitSentence",
 				sentence,
@@ -319,8 +339,12 @@ describe("decide", () => {
 			const users = Array.from({ length: 3 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
-			const room = Room(RoomCode("TEST"), users, VotePhase(RoundId(1), Topic("テストお題")));
-			const vote = Vote(users[0].id, RoundId(1), users[1].id);
+			const room = Room(
+				RoomCode("TEST"),
+				users,
+				VotePhase(RoundId("test-round"), Topic("テストお題")),
+			);
+			const vote = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const result = decide(room, {
 				type: "Vote",
 				vote,
@@ -336,13 +360,13 @@ describe("decide", () => {
 			const users = Array.from({ length: 2 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
-			const vote1 = Vote(users[0].id, RoundId(1), users[1].id);
+			const vote1 = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				VotePhase(RoundId(1), Topic("テストお題"), [vote1]),
+				VotePhase(RoundId("test-round"), Topic("テストお題"), [vote1]),
 			);
-			const vote2 = Vote(users[1].id, RoundId(1), users[0].id);
+			const vote2 = Vote(users[1].id, RoundId("test-round"), users[0].id);
 			const result = decide(room, {
 				type: "Vote",
 				vote: vote2,
@@ -359,13 +383,13 @@ describe("decide", () => {
 			const users = Array.from({ length: 2 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
-			const vote1 = Vote(users[0].id, RoundId(1), users[1].id);
+			const vote1 = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				VotePhase(RoundId(1), Topic("テストお題"), [vote1]),
+				VotePhase(RoundId("test-round"), Topic("テストお題"), [vote1]),
 			);
-			const vote2 = Vote(users[0].id, RoundId(1), users[1].id);
+			const vote2 = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const result = decide(room, {
 				type: "Vote",
 				vote: vote2,
@@ -381,7 +405,7 @@ describe("decide", () => {
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
 			const room = Room(RoomCode("TEST"), users, WaitingPhase());
-			const vote = Vote(users[0].id, RoundId(1), users[1].id);
+			const vote = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const result = decide(room, {
 				type: "Vote",
 				vote,

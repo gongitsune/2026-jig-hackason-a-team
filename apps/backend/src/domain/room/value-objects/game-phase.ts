@@ -45,6 +45,7 @@ export const VotePhaseSchema = v.pipe(
 export const ResultPhaseSchema = v.pipe(
 	v.object({
 		tag: v.literal(RoundStatusList["4"]),
+		roundId: RoundIdSchema,
 	}),
 	v.readonly(),
 );
@@ -124,7 +125,8 @@ export const addVoteToVotePhase = (phase: VotePhase, vote: Vote): VotePhase =>
 		submitted: [...phase.submitted, vote],
 	});
 
-export const ResultPhase = (): ResultPhase =>
+export const ResultPhase = (roundId: RoundId): ResultPhase =>
 	v.parse(ResultPhaseSchema, {
 		tag: RoundStatusList["4"],
+		roundId,
 	});

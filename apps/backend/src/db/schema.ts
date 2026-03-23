@@ -13,7 +13,7 @@ export const wordsTable = sqliteTable(
 		writerId: text()
 			.notNull()
 			.references(() => usersTable.id, { onDelete: "cascade" }),
-		roundId: int()
+		roundId: text()
 			.notNull()
 			.references(() => roundsTable.id, { onDelete: "cascade" }),
 		word: text().notNull(),
@@ -27,7 +27,7 @@ export const sentencesTable = sqliteTable(
 		writerId: text()
 			.notNull()
 			.references(() => usersTable.id, { onDelete: "cascade" }),
-		roundId: int()
+		roundId: text()
 			.notNull()
 			.references(() => roundsTable.id, { onDelete: "cascade" }),
 		sentence: text().notNull(),
@@ -41,7 +41,7 @@ export const votesTable = sqliteTable(
 		voterId: text()
 			.notNull()
 			.references(() => usersTable.id, { onDelete: "cascade" }),
-		roundId: int()
+		roundId: text()
 			.notNull()
 			.references(() => roundsTable.id, { onDelete: "cascade" }),
 		targetId: text()
@@ -54,6 +54,7 @@ export const votesTable = sqliteTable(
 export const roundsTable = sqliteTable("rounds", {
 	id: text().primaryKey(),
 	roundNumber: int().notNull(),
-	status: text({ enum: RoundStatusList }).notNull(),
+	phase: text({ enum: RoundStatusList }).notNull(),
 	topic: text().notNull(),
+	distributedWords: text(),
 });
