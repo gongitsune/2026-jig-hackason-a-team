@@ -1,7 +1,7 @@
 import * as v from "valibot";
 
-import { UserId, UserIdSchema } from "../../user/user";
 import { RoundId, RoundIdSchema } from "./round";
+import { UserId, UserIdSchema } from "./user";
 
 export const SentenceSchema = v.pipe(
 	v.object({

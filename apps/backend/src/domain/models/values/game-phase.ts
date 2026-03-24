@@ -1,11 +1,11 @@
 import * as v from "valibot";
 
+import { RoundId, RoundIdSchema, RoundStatusList } from "../entities/round";
+import { Sentence, SentenceSchema } from "../entities/sentence";
+import { Vote, VoteSchema } from "../entities/vote";
+import { SubmittedWord, SubmittedWordSchema, Word, WordSchema } from "../entities/word";
 import { GameResult, GameResultSchema } from "./game-result";
-import { RoundId, RoundIdSchema, RoundStatusList } from "./round";
-import { Sentence, SentenceSchema } from "./sentence";
 import { Topic, TopicSchema } from "./topic";
-import { Vote, VoteSchema } from "./vote";
-import { SubmittedWord, SubmittedWordSchema, Word, WordSchema } from "./word";
 
 export const WaitingPhaseSchema = v.pipe(
 	v.object({

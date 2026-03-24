@@ -1,6 +1,6 @@
 import assert from "assert";
 
-import { GameEvent } from "./commands";
+import { addUserToRoom, removeUserFromRoom, Room, updateRoomPhase } from "../models/entities/room";
 import {
 	addSentenceToSentenceInputPhase,
 	addVoteToVotePhase,
@@ -9,8 +9,8 @@ import {
 	SentenceInputPhase,
 	VotePhase,
 	WordInputPhase,
-} from "./value-objects/game-phase";
-import { addUserToRoom, removeUserFromRoom, Room, updateRoomPhase } from "./value-objects/room";
+} from "../models/values/game-phase";
+import { GameEvent } from "../models/values/room-commands";
 
 type EventHandler<Type extends GameEvent["type"]> = (
 	room: Room,

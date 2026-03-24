@@ -1,7 +1,7 @@
 import * as v from "valibot";
 
-import { User, UserSchema } from "../../user/user";
-import { GamePhase, GamePhaseSchema } from "./game-phase";
+import { GamePhase, GamePhaseSchema } from "../values/game-phase";
+import { User, UserSchema } from "./user";
 
 export const RoomCodeSchema = v.pipe(
 	v.string(),

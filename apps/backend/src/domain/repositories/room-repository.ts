@@ -4,7 +4,12 @@ import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
 import { roundsTable, sentencesTable, usersTable, votesTable, wordsTable } from "../../db/schema";
 import { topics } from "../../resources/topics";
 import { systemWords } from "../../resources/words";
-import { User, UserId, UserName } from "../user/user";
+import { Room, RoomCode } from "../models/entities/room";
+import { RoundId } from "../models/entities/round";
+import { Sentence } from "../models/entities/sentence";
+import { User, UserId, UserName } from "../models/entities/user";
+import { Vote } from "../models/entities/vote";
+import { SubmittedWord, Word } from "../models/entities/word";
 import {
 	GamePhase,
 	ResultPhase,
@@ -12,14 +17,9 @@ import {
 	VotePhase,
 	WaitingPhase,
 	WordInputPhase,
-} from "./value-objects/game-phase";
-import { GameResult, UserResult } from "./value-objects/game-result";
-import { Room, RoomCode } from "./value-objects/room";
-import { RoundId } from "./value-objects/round";
-import { Sentence } from "./value-objects/sentence";
-import { Topic } from "./value-objects/topic";
-import { Vote } from "./value-objects/vote";
-import { SubmittedWord, Word } from "./value-objects/word";
+} from "../models/values/game-phase";
+import { GameResult, UserResult } from "../models/values/game-result";
+import { Topic } from "../models/values/topic";
 
 export type RoomRepository = {
 	load: (code: RoomCode) => Room;

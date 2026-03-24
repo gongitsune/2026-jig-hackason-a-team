@@ -1,10 +1,12 @@
 import { UseCaseResult, success, failure, UseCase } from ".";
-import { GameCommand } from "../domain/room/commands";
-import { decide } from "../domain/room/decide";
-import { evolve } from "../domain/room/evolve";
-import { RoomRepository } from "../domain/room/repository";
-import { Room, RoomCode } from "../domain/room/value-objects/room";
-import { User } from "../domain/user/user";
+import { decide } from "../domain/logics/room-decide";
+import { evolve } from "../domain/logics/room-evolve";
+import { Room, RoomCode } from "../domain/models/entities/room";
+import { RoundId } from "../domain/models/entities/round";
+import { User } from "../domain/models/entities/user";
+import { GameCommand } from "../domain/models/values/room-commands";
+import { Topic } from "../domain/models/values/topic";
+import { RoomRepository, loadTopics } from "../domain/repositories/room-repository";
 
 // ===== Common =====
 
@@ -68,5 +70,8 @@ export const StartGameUseCase: UseCase<Deps, RoomCode, Room> = (deps) => (roomCo
 		return failure("Not enough players to start the game");
 	}
 
-	return runCommand(deps, room, { type: "StartGame", roundId: 1 });
+	const topics = loadTopics();
+	const topic = Topic(topics[Math.floor(Math.random() * topics.length)]);
+	const roundId = RoundId("1");
+	return runCommand(deps, room, { type: "StartGame", topic, roundId });
 };

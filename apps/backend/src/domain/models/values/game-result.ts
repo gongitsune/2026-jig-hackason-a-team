@@ -1,7 +1,7 @@
 import * as v from "valibot";
 
-import { User, UserSchema } from "../../user/user";
-import { Sentence, SentenceSchema } from "./sentence";
+import { Sentence, SentenceSchema } from "../entities/sentence";
+import { User, UserSchema } from "../entities/user";
 import { Topic, TopicSchema } from "./topic";
 
 export const UserResultSchema = v.pipe(

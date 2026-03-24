@@ -1,20 +1,20 @@
 import { describe, expect, it } from "vitest";
 
-import { User, UserId, UserName } from "../user/user";
-import { GameEvent } from "./commands";
-import { evolve } from "./evolve";
+import { Room, RoomCode } from "../models/entities/room";
+import { RoundId } from "../models/entities/round";
+import { Sentence } from "../models/entities/sentence";
+import { User, UserId, UserName } from "../models/entities/user";
+import { Vote } from "../models/entities/vote";
+import { SubmittedWord, Word } from "../models/entities/word";
 import {
 	SentenceInputPhase,
 	VotePhase,
 	WaitingPhase,
 	WordInputPhase,
-} from "./value-objects/game-phase";
-import { Room, RoomCode } from "./value-objects/room";
-import { RoundId } from "./value-objects/round";
-import { Sentence } from "./value-objects/sentence";
-import { Topic } from "./value-objects/topic";
-import { Vote } from "./value-objects/vote";
-import { SubmittedWord, Word } from "./value-objects/word";
+} from "../models/values/game-phase";
+import { GameEvent } from "../models/values/room-commands";
+import { Topic } from "../models/values/topic";
+import { evolve } from "./room-evolve";
 
 describe("evolve", () => {
 	describe("UserJoined", () => {

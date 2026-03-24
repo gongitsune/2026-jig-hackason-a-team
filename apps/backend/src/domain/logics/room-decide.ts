@@ -1,12 +1,18 @@
 import { sampleN, shuffleArray } from "../../utils/random";
-import { User } from "../user/user";
-import { DecideResult, failure, GameCommand, GameEvent, success } from "./commands";
-import { Room } from "./value-objects/room";
-import { RoundId } from "./value-objects/round";
-import { Sentence } from "./value-objects/sentence";
-import { Topic } from "./value-objects/topic";
-import { Vote } from "./value-objects/vote";
-import { SubmittedWord, Word } from "./value-objects/word";
+import { Room } from "../models/entities/room";
+import { RoundId } from "../models/entities/round";
+import { Sentence } from "../models/entities/sentence";
+import { User } from "../models/entities/user";
+import { Vote } from "../models/entities/vote";
+import { SubmittedWord, Word } from "../models/entities/word";
+import {
+	DecideResult,
+	failure,
+	GameCommand,
+	GameEvent,
+	success,
+} from "../models/values/room-commands";
+import { Topic } from "../models/values/topic";
 
 const join = (room: Room, user: User): DecideResult => {
 	if (room.phase.tag !== "Waiting") {

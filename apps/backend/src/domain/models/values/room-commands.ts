@@ -1,9 +1,9 @@
-import { User } from "../user/user";
-import { RoundId } from "./value-objects/round";
-import { Sentence } from "./value-objects/sentence";
-import { Topic } from "./value-objects/topic";
-import { Vote } from "./value-objects/vote";
-import { SubmittedWord, Word } from "./value-objects/word";
+import { RoundId } from "../entities/round";
+import { Sentence } from "../entities/sentence";
+import { User } from "../entities/user";
+import { Vote } from "../entities/vote";
+import { SubmittedWord, Word } from "../entities/word";
+import { Topic } from "./topic";
 
 export type GameCommand =
 	| { type: "Join"; user: User }

@@ -1,6 +1,6 @@
 import { int, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-import { RoundStatusList } from "../domain/room/value-objects/round";
+import { RoundStatusList } from "../domain/models/entities/round";
 
 export const usersTable = sqliteTable("users", {
 	id: text().primaryKey(),

@@ -1,6 +1,6 @@
 import * as v from "valibot";
 
-import { Topic, TopicSchema } from "./topic";
+import { Topic, TopicSchema } from "../values/topic";
 
 export const RoundIdSchema = v.pipe(v.string(), v.brand("RoundId"));
 export const RoundStatusList = [
