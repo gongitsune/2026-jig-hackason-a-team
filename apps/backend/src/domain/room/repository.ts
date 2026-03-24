@@ -22,7 +22,7 @@ import { Vote } from "./value-objects/vote";
 import { SubmittedWord, Word } from "./value-objects/word";
 
 export type RoomRepository = {
-	load: (code: RoomCode) => Room | null;
+	load: (code: RoomCode) => Room;
 	save: (room: Room) => void;
 };
 
@@ -31,7 +31,7 @@ export const loadSystemWords = () => systemWords;
 
 // oxlint-disable-next-line eslint/max-lines-per-function
 export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository => {
-	const load = (code: RoomCode): Room | null => {
+	const load = (code: RoomCode): Room => {
 		const users = db
 			.select()
 			.from(usersTable)
