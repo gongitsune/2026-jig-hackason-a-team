@@ -13,8 +13,10 @@
 		"coverage": "vitest run --coverage"
 	},
 	"dependencies": {
+		"@ichibun/ws-api": "workspace:*",
 		"drizzle-orm": "1.0.0-beta.18-7eb39f0",
-		"hono": "^4.12.8"
+		"hono": "^4.12.8",
+		"nanoid": "^5.1.7"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.13.3",

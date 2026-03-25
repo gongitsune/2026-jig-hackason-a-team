@@ -1,7 +1,7 @@
 import * as v from "valibot";
 
 import { GamePhase, GamePhaseSchema } from "../values/game-phase";
-import { User, UserSchema } from "./user";
+import { User, UserId, UserSchema } from "./user";
 
 export const RoomCodeSchema = v.pipe(
 	v.string(),
@@ -37,10 +37,10 @@ export const addUserToRoom = (room: Room, user: User): Room => {
 	};
 };
 
-export const removeUserFromRoom = (room: Room, user: User): Room => {
+export const removeUserFromRoom = (room: Room, userId: UserId): Room => {
 	return {
 		...room,
-		users: room.users.filter((u) => u.id !== user.id),
+		users: room.users.filter((u) => u.id !== userId),
 	};
 };
 

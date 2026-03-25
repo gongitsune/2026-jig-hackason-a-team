@@ -5,14 +5,13 @@ import { roundsTable, sentencesTable, usersTable, votesTable, wordsTable } from 
 import { topics } from "../../resources/topics";
 import { systemWords } from "../../resources/words";
 import { Room, RoomCode } from "../models/entities/room";
-import { RoundId } from "../models/entities/round";
+import { Round, RoundId, RoundStatus } from "../models/entities/round";
 import { Sentence } from "../models/entities/sentence";
 import { User, UserId, UserName } from "../models/entities/user";
 import { Vote } from "../models/entities/vote";
 import { SubmittedWord, Word } from "../models/entities/word";
 import {
 	GamePhase,
-	ResultPhase,
 	SentenceInputPhase,
 	VotePhase,
 	WaitingPhase,
@@ -24,10 +23,12 @@ import { Topic } from "../models/values/topic";
 export type RoomRepository = {
 	load: (code: RoomCode) => Room;
 	save: (room: Room) => void;
+	insertRound: (round: Round) => void;
+	findRoundById: (roundId: RoundId) => Round | undefined;
 };
 
-export const loadTopics = () => topics;
-export const loadSystemWords = () => systemWords;
+export const loadTopics = () => topics.map(Topic);
+export const loadSystemWords = () => systemWords.map(Word);
 
 // oxlint-disable-next-line eslint/max-lines-per-function
 export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository => {
@@ -48,16 +49,24 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 	};
 
 	const save = (room: Room) => {
-		db.insert(usersTable)
-			.values(
-				room.users.map((u) => ({
-					id: u.id,
-					name: u.name,
-				})),
-			)
-			.onConflictDoNothing()
-			.run();
 		savePhase(room.phase);
+	};
+
+	const insertRound = (round: Round) => {
+		db.insert(roundsTable)
+			.values({
+				id: round.id,
+				roundNumber: round.roundNumber,
+				topic: round.topic,
+				phase: "Waiting",
+			})
+			.run();
+	};
+
+	const findRoundById = (roundId: RoundId): Round | undefined => {
+		const round = db.select().from(roundsTable).where(eq(roundsTable.id, roundId)).get();
+		if (!round) return undefined;
+		return Round(RoundId(roundId), round.roundNumber, Topic(round.topic), RoundStatus(round.phase));
 	};
 
 	// oxlint-disable-next-line eslint/max-lines-per-function
@@ -103,11 +112,18 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 					.where(eq(votesTable.roundId, latestRound.id))
 					.all()
 					.map((r) => Vote(UserId(r.voterId), RoundId(r.roundId), UserId(r.targetId)));
-				return VotePhase(RoundId(latestRound.id), Topic(latestRound.topic), submittedVotes);
-			}
-			case "Result": {
-				if (!latestRound) throw new Error("No round found for Result phase");
-				return ResultPhase(RoundId(latestRound.id));
+				const sentences = db
+					.select()
+					.from(sentencesTable)
+					.where(eq(sentencesTable.roundId, latestRound.id))
+					.all()
+					.map((r) => Sentence(UserId(r.writerId), RoundId(r.roundId), r.sentence));
+				return VotePhase(
+					RoundId(latestRound.id),
+					Topic(latestRound.topic),
+					sentences,
+					submittedVotes,
+				);
 			}
 		}
 	};
@@ -177,20 +193,14 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 					.run();
 				break;
 			}
-			case "Result": {
-				db.update(roundsTable)
-					.set({
-						phase: "Result",
-					})
-					.where(eq(roundsTable.id, phase.roundId))
-					.run();
-			}
 		}
 	};
 
 	return {
 		load,
 		save,
+		insertRound,
+		findRoundById,
 	};
 };
 

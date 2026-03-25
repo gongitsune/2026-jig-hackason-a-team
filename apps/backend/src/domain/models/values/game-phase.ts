@@ -38,14 +38,8 @@ export const VotePhaseSchema = v.pipe(
 		tag: v.literal(RoundStatusList["3"]),
 		roundId: RoundIdSchema,
 		topic: TopicSchema,
+		sentences: v.array(SentenceSchema),
 		submitted: v.array(VoteSchema),
-	}),
-	v.readonly(),
-);
-export const ResultPhaseSchema = v.pipe(
-	v.object({
-		tag: v.literal(RoundStatusList["4"]),
-		roundId: RoundIdSchema,
 	}),
 	v.readonly(),
 );
@@ -54,14 +48,12 @@ export const GamePhaseSchema = v.variant("tag", [
 	WordInputPhaseSchema,
 	SentenceInputPhaseSchema,
 	VotePhaseSchema,
-	ResultPhaseSchema,
 ]);
 
 export type WaitingPhase = v.InferOutput<typeof WaitingPhaseSchema>;
 export type WordInputPhase = v.InferOutput<typeof WordInputPhaseSchema>;
 export type SentenceInputPhase = v.InferOutput<typeof SentenceInputPhaseSchema>;
 export type VotePhase = v.InferOutput<typeof VotePhaseSchema>;
-export type ResultPhase = v.InferOutput<typeof ResultPhaseSchema>;
 export type GamePhase = v.InferOutput<typeof GamePhaseSchema>;
 
 export const WaitingPhase = (lastResult?: GameResult): WaitingPhase =>
@@ -112,21 +104,21 @@ export const addSentenceToSentenceInputPhase = (
 		submitted: [...phase.submitted, sentence],
 	});
 
-export const VotePhase = (roundId: RoundId, topic: Topic, submitted: Vote[] = []): VotePhase =>
+export const VotePhase = (
+	roundId: RoundId,
+	topic: Topic,
+	sentences: Sentence[],
+	submitted: Vote[] = [],
+): VotePhase =>
 	v.parse(VotePhaseSchema, {
 		tag: RoundStatusList["3"],
 		roundId,
 		topic,
+		sentences,
 		submitted,
 	});
 export const addVoteToVotePhase = (phase: VotePhase, vote: Vote): VotePhase =>
 	v.parse(VotePhaseSchema, {
 		...phase,
 		submitted: [...phase.submitted, vote],
-	});
-
-export const ResultPhase = (roundId: RoundId): ResultPhase =>
-	v.parse(ResultPhaseSchema, {
-		tag: RoundStatusList["4"],
-		roundId,
 	});

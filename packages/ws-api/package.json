@@ -1,0 +1,10 @@
+{
+	"name": "@ichibun/ws-api",
+	"version": "1.0.0",
+	"private": true,
+	"license": "MIT",
+	"exports": {
+		".": "./src/ws-api.ts"
+	},
+	"packageManager": "pnpm@10.32.1"
+}

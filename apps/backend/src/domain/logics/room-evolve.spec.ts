@@ -12,6 +12,7 @@ import {
 	WaitingPhase,
 	WordInputPhase,
 } from "../models/values/game-phase";
+import { aggregateGameResult } from "../models/values/game-result";
 import { GameEvent } from "../models/values/room-commands";
 import { Topic } from "../models/values/topic";
 import { evolve } from "./room-evolve";
@@ -48,7 +49,7 @@ describe("evolve", () => {
 			const user1 = User(UserId(crypto.randomUUID()), UserName("Alice"));
 			const user2 = User(UserId(crypto.randomUUID()), UserName("Bob"));
 			const room = Room(RoomCode("TEST"), [user1, user2], WaitingPhase());
-			const event: GameEvent = { type: "UserLeft", user: user1 };
+			const event: GameEvent = { type: "UserLeft", userId: user1.id };
 
 			const newRoom = evolve(room, event);
 
@@ -59,7 +60,7 @@ describe("evolve", () => {
 		it("全ユーザーが退出できる", () => {
 			const user = User(UserId(crypto.randomUUID()), UserName("Alice"));
 			let room = Room(RoomCode("TEST"), [user], WaitingPhase());
-			room = evolve(room, { type: "UserLeft", user });
+			room = evolve(room, { type: "UserLeft", userId: user.id });
 
 			expect(room.users.length).toBe(0);
 		});
@@ -242,7 +243,11 @@ describe("evolve", () => {
 					sentence2,
 				]),
 			);
-			const event: GameEvent = { type: "AllSentencesSubmitted", roundId: RoundId("test-round") };
+			const event: GameEvent = {
+				type: "AllSentencesSubmitted",
+				roundId: RoundId("test-round"),
+				sentences: [sentence1, sentence2],
+			};
 
 			const newRoom = evolve(room, event);
 
@@ -261,10 +266,14 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Alice")),
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 			];
+			const sentences = [
+				Sentence(users[0].id, RoundId("test-round"), "激安ふにゃふにゃ生炒め"),
+				Sentence(users[1].id, RoundId("test-round"), "激安の生肉をふにゃふにゃに炒めたの"),
+			];
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				VotePhase(RoundId("test-round"), Topic("テストお題")),
+				VotePhase(RoundId("test-round"), Topic("テストお題"), sentences),
 			);
 			const vote = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const event: GameEvent = { type: "VoteSubmitted", vote };
@@ -284,13 +293,18 @@ describe("evolve", () => {
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
 				User(UserId(crypto.randomUUID()), UserName("Charlie")),
 			];
+			const sentences = [
+				Sentence(users[0].id, RoundId("test-round"), "激安ふにゃふにゃ生炒め"),
+				Sentence(users[1].id, RoundId("test-round"), "激安の生肉をふにゃふにゃに炒めたの"),
+				Sentence(users[2].id, RoundId("test-round"), "生の激安肉をふにゃふにゃに炒めたの"),
+			];
 			const vote1 = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const vote2 = Vote(users[1].id, RoundId("test-round"), users[2].id);
 
 			let room = Room(
 				RoomCode("TEST"),
 				users,
-				VotePhase(RoundId("test-round"), Topic("テストお題")),
+				VotePhase(RoundId("test-round"), Topic("テストお題"), sentences),
 			);
 			room = evolve(room, { type: "VoteSubmitted", vote: vote1 });
 			room = evolve(room, { type: "VoteSubmitted", vote: vote2 });
@@ -305,25 +319,35 @@ describe("evolve", () => {
 	});
 
 	describe("RoundEnded", () => {
-		it("ResultPhase に遷移する", () => {
+		it("WaitingPhase に遷移する", () => {
 			const users = [
 				User(UserId(crypto.randomUUID()), UserName("Alice")),
 				User(UserId(crypto.randomUUID()), UserName("Bob")),
+			];
+			const sentences = [
+				Sentence(users[0].id, RoundId("test-round"), "激安ふにゃふにゃ生炒め"),
+				Sentence(users[1].id, RoundId("test-round"), "激安の生肉をふにゃふにゃに炒めたの"),
 			];
 			const vote1 = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const vote2 = Vote(users[1].id, RoundId("test-round"), users[0].id);
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				VotePhase(RoundId("test-round"), Topic("テストお題"), [vote1, vote2]),
+				VotePhase(RoundId("test-round"), Topic("テストお題"), sentences, [vote1, vote2]),
 			);
-			const event: GameEvent = { type: "RoundEnded", roundId: RoundId("test-round") };
+
+			const result = aggregateGameResult(1, Topic("テストお題"), sentences, users, [vote1, vote2]);
+			const event: GameEvent = {
+				type: "RoundEnded",
+				roundId: RoundId("test-round"),
+				result: result,
+			};
 
 			const newRoom = evolve(room, event);
 
-			expect(newRoom.phase.tag).toBe("Result");
-			if (newRoom.phase.tag === "Result") {
-				expect(newRoom.phase.roundId).toEqual(RoundId("test-round"));
+			expect(newRoom.phase.tag).toBe("Waiting");
+			if (newRoom.phase.tag === "Waiting") {
+				expect(newRoom.phase.lastResult).toEqual(result);
 			}
 		});
 	});
@@ -376,7 +400,11 @@ describe("evolve", () => {
 			room = evolve(room, { type: "SentenceSubmitted", sentence: sentence2 });
 
 			// 投票フェーズへ
-			room = evolve(room, { type: "AllSentencesSubmitted", roundId: RoundId("test-round") });
+			room = evolve(room, {
+				type: "AllSentencesSubmitted",
+				roundId: RoundId("test-round"),
+				sentences: [sentence1, sentence2],
+			});
 			expect(room.phase.tag).toBe("Voting");
 
 			// 投票
@@ -386,8 +414,18 @@ describe("evolve", () => {
 			room = evolve(room, { type: "VoteSubmitted", vote: vote2 });
 
 			// ラウンド終了
-			room = evolve(room, { type: "RoundEnded", roundId: RoundId("test-round") });
-			expect(room.phase.tag).toBe("Result");
+			room = evolve(room, {
+				type: "RoundEnded",
+				roundId: RoundId("test-round"),
+				result: aggregateGameResult(
+					1,
+					Topic("テストお題"),
+					[sentence1, sentence2],
+					[user1, user2],
+					[vote1, vote2],
+				),
+			});
+			expect(room.phase.tag).toBe("Waiting");
 		});
 	});
 });

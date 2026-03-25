@@ -5,9 +5,9 @@ import {
 	addSentenceToSentenceInputPhase,
 	addVoteToVotePhase,
 	addWordToWordInputPhase,
-	ResultPhase,
 	SentenceInputPhase,
 	VotePhase,
+	WaitingPhase,
 	WordInputPhase,
 } from "../models/values/game-phase";
 import { GameEvent } from "../models/values/room-commands";
@@ -21,7 +21,7 @@ const userJoined: EventHandler<"UserJoined"> = (room, event) => {
 	return addUserToRoom(room, event.user);
 };
 const userLeft: EventHandler<"UserLeft"> = (room, event) => {
-	return removeUserFromRoom(room, event.user);
+	return removeUserFromRoom(room, event.userId);
 };
 const gameStarted: EventHandler<"GameStarted"> = (room, event) => {
 	return updateRoomPhase(room, WordInputPhase(event.roundId, event.topic));
@@ -43,7 +43,7 @@ const sentenceSubmitted: EventHandler<"SentenceSubmitted"> = (room, event) => {
 };
 const allSentencesSubmitted: EventHandler<"AllSentencesSubmitted"> = (room, event) => {
 	assert(room.phase.tag === "SentenceInputting");
-	return updateRoomPhase(room, VotePhase(event.roundId, room.phase.topic));
+	return updateRoomPhase(room, VotePhase(event.roundId, room.phase.topic, event.sentences));
 };
 const voteSubmitted: EventHandler<"VoteSubmitted"> = (room, event) => {
 	assert(room.phase.tag === "Voting");
@@ -51,7 +51,7 @@ const voteSubmitted: EventHandler<"VoteSubmitted"> = (room, event) => {
 };
 const roundEnded: EventHandler<"RoundEnded"> = (room, event) => {
 	assert(room.phase.tag === "Voting");
-	return updateRoomPhase(room, ResultPhase(event.roundId));
+	return updateRoomPhase(room, WaitingPhase(event.result));
 };
 
 export const evolve = (room: Room, event: GameEvent): Room => {

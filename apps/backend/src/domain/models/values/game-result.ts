@@ -1,7 +1,8 @@
 import * as v from "valibot";
 
 import { Sentence, SentenceSchema } from "../entities/sentence";
-import { User, UserSchema } from "../entities/user";
+import { User, UserId, UserSchema } from "../entities/user";
+import { Vote } from "../entities/vote";
 import { Topic, TopicSchema } from "./topic";
 
 export const UserResultSchema = v.pipe(
@@ -40,4 +41,30 @@ export const GameResult = (
 	results: UserResult[],
 ): GameResult => {
 	return v.parse(GameResultSchema, { roundNumber, topic, results });
+};
+
+export const aggregateGameResult = (
+	roundNumber: number,
+	topic: Topic,
+	sentences: Sentence[],
+	users: User[],
+	votes: Vote[],
+): GameResult => {
+	const voteCntByUserId: Record<UserId, number> = {};
+	votes.forEach((vote) => {
+		voteCntByUserId[vote.targetId]++;
+	});
+
+	const sentencesByUserId: Record<UserId, Sentence> = {};
+	sentences.forEach((sentence) => {
+		sentencesByUserId[sentence.writerId] = sentence;
+	});
+
+	const results = users.map((user) => {
+		const sentence = sentencesByUserId[user.id];
+		const voteCount = voteCntByUserId[user.id] || 0;
+		return UserResult(user, sentence, voteCount);
+	});
+
+	return GameResult(roundNumber, topic, results);
 };

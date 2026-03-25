@@ -1,10 +1,13 @@
+import assert from "assert";
+
 import { sampleN, shuffleArray } from "../../utils/random";
 import { Room } from "../models/entities/room";
 import { RoundId } from "../models/entities/round";
 import { Sentence } from "../models/entities/sentence";
-import { User } from "../models/entities/user";
+import { User, UserId } from "../models/entities/user";
 import { Vote } from "../models/entities/vote";
 import { SubmittedWord, Word } from "../models/entities/word";
+import { GameResult, UserResult } from "../models/values/game-result";
 import {
 	DecideResult,
 	failure,
@@ -25,15 +28,15 @@ const join = (room: Room, user: User): DecideResult => {
 	const joinedEvent = { type: "UserJoined", user } satisfies GameEvent;
 	return success([joinedEvent]);
 };
-const leave = (room: Room, user: User): DecideResult => {
+const leave = (room: Room, userId: UserId): DecideResult => {
 	if (room.phase.tag !== "Waiting") {
 		return failure("Game already started");
 	}
-	if (!room.users.some((u) => u.id === user.id)) {
+	if (!room.users.some((u) => u.id === userId)) {
 		return failure("User not in the room");
 	}
 
-	const leftEvent = { type: "UserLeft", user: user } satisfies GameEvent;
+	const leftEvent = { type: "UserLeft", userId: userId } satisfies GameEvent;
 	return success([leftEvent]);
 };
 const startGame = (room: Room, topic: Topic, roundId: RoundId): DecideResult => {
@@ -108,13 +111,14 @@ const submitSentence = (room: Room, sentence: Sentence): DecideResult => {
 		const allSentencesSubmittedEvent = {
 			type: "AllSentencesSubmitted",
 			roundId: room.phase.roundId,
+			sentences: [...room.phase.submitted, sentence],
 		} satisfies GameEvent;
 		return success([sentenceSubmittedEvent, allSentencesSubmittedEvent]);
 	}
 
 	return success([sentenceSubmittedEvent]);
 };
-const voting = (room: Room, vote: Vote): DecideResult => {
+const voting = (room: Room, vote: Vote, roundNumber: number): DecideResult => {
 	if (room.phase.tag !== "Voting") {
 		return failure("Not in voting phase");
 	}
@@ -130,11 +134,24 @@ const voting = (room: Room, vote: Vote): DecideResult => {
 
 	// 全員が投票したかどうかをチェック
 	if (room.phase.submitted.length + 1 === room.users.length) {
-		const allVotesSubmittedEvent = {
+		const submitted = [...room.phase.submitted, vote];
+		const sentences = room.phase.sentences;
+		const roundEndedEvent = {
 			type: "RoundEnded",
 			roundId: room.phase.roundId,
+			result: GameResult(
+				roundNumber,
+				room.phase.topic,
+				room.users.map((u) => {
+					const voteCount = submitted.filter((v) => v.targetId === u.id).length;
+					const sentence = sentences.find((s) => s.writerId === u.id);
+					assert(sentence, "Sentence not found for user " + u.id);
+
+					return UserResult(u, sentence, voteCount);
+				}),
+			),
 		} satisfies GameEvent;
-		return success([voteSubmittedEvent, allVotesSubmittedEvent]);
+		return success([voteSubmittedEvent, roundEndedEvent]);
 	}
 
 	return success([voteSubmittedEvent]);
@@ -145,7 +162,7 @@ export const decide = (room: Room, cmd: GameCommand): DecideResult => {
 		case "Join":
 			return join(room, cmd.user);
 		case "Leave":
-			return leave(room, cmd.user);
+			return leave(room, cmd.userId);
 		case "StartGame":
 			return startGame(room, cmd.topic, cmd.roundId);
 		case "SubmitWord":
@@ -153,6 +170,6 @@ export const decide = (room: Room, cmd: GameCommand): DecideResult => {
 		case "SubmitSentence":
 			return submitSentence(room, cmd.sentence);
 		case "Vote":
-			return voting(room, cmd.vote);
+			return voting(room, cmd.vote, cmd.roundNumber);
 	}
 };

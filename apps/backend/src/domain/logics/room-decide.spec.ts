@@ -48,7 +48,7 @@ describe("decide", () => {
 			...room,
 			users: [...room.users, user],
 		};
-		const result = decide(roomWithUser, { type: "Leave", user });
+		const result = decide(roomWithUser, { type: "Leave", userId: user.id });
 
 		expect(result.type).toBe("Success");
 		if (result.type === "Failure") return;
@@ -56,7 +56,7 @@ describe("decide", () => {
 		expect(result.events.length).toBe(1);
 		expect(result.events[0].type).toEqual("UserLeft");
 		if (result.events[0].type === "UserLeft") {
-			expect(result.events[0].user).toEqual(user);
+			expect(result.events[0].userId).toEqual(user.id);
 		}
 	});
 
@@ -115,7 +115,7 @@ describe("decide", () => {
 	it("存在しないユーザーの退出は失敗", () => {
 		const room = makeRoomWithUsers(2);
 		const nonExistentUser = User(UserId(crypto.randomUUID()), UserName("Ghost"));
-		const result = decide(room, { type: "Leave", user: nonExistentUser });
+		const result = decide(room, { type: "Leave", userId: nonExistentUser.id });
 
 		expect(result.type).toBe("Failure");
 		if (result.type === "Success") return;
@@ -131,7 +131,7 @@ describe("decide", () => {
 			users,
 			WordInputPhase(RoundId("test-round"), Topic("テストお題")),
 		);
-		const result = decide(room, { type: "Leave", user: users[0] });
+		const result = decide(room, { type: "Leave", userId: users[0].id });
 
 		expect(result.type).toBe("Failure");
 		if (result.type === "Success") return;
@@ -339,15 +339,19 @@ describe("decide", () => {
 			const users = Array.from({ length: 3 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
+			const sentence1 = Sentence(users[0].id, RoundId("test-round"), "テスト文章1");
+			const sentence2 = Sentence(users[1].id, RoundId("test-round"), "テスト文章2");
+			const sentence3 = Sentence(users[2].id, RoundId("test-round"), "テスト文章3");
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				VotePhase(RoundId("test-round"), Topic("テストお題")),
+				VotePhase(RoundId("test-round"), Topic("テストお題"), [sentence1, sentence2, sentence3]),
 			);
 			const vote = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const result = decide(room, {
 				type: "Vote",
 				vote,
+				roundNumber: 1,
 			});
 
 			expect(result.type).toBe("Success");
@@ -360,16 +364,19 @@ describe("decide", () => {
 			const users = Array.from({ length: 2 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
+			const sentence1 = Sentence(users[0].id, RoundId("test-round"), "テスト文章1");
+			const sentence2 = Sentence(users[1].id, RoundId("test-round"), "テスト文章2");
 			const vote1 = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				VotePhase(RoundId("test-round"), Topic("テストお題"), [vote1]),
+				VotePhase(RoundId("test-round"), Topic("テストお題"), [sentence1, sentence2], [vote1]),
 			);
 			const vote2 = Vote(users[1].id, RoundId("test-round"), users[0].id);
 			const result = decide(room, {
 				type: "Vote",
 				vote: vote2,
+				roundNumber: 1,
 			});
 
 			expect(result.type).toBe("Success");
@@ -383,16 +390,19 @@ describe("decide", () => {
 			const users = Array.from({ length: 2 }, (_, i) =>
 				User(UserId(crypto.randomUUID()), UserName(`User${i + 1}`)),
 			);
+			const sentence1 = Sentence(users[0].id, RoundId("test-round"), "テスト文章1");
+			const sentence2 = Sentence(users[1].id, RoundId("test-round"), "テスト文章2");
 			const vote1 = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const room = Room(
 				RoomCode("TEST"),
 				users,
-				VotePhase(RoundId("test-round"), Topic("テストお題"), [vote1]),
+				VotePhase(RoundId("test-round"), Topic("テストお題"), [sentence1, sentence2], [vote1]),
 			);
 			const vote2 = Vote(users[0].id, RoundId("test-round"), users[1].id);
 			const result = decide(room, {
 				type: "Vote",
 				vote: vote2,
+				roundNumber: 1,
 			});
 
 			expect(result.type).toBe("Failure");
@@ -409,6 +419,7 @@ describe("decide", () => {
 			const result = decide(room, {
 				type: "Vote",
 				vote,
+				roundNumber: 1,
 			});
 
 			expect(result.type).toBe("Failure");
