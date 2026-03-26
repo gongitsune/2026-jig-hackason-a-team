@@ -40,7 +40,6 @@ const ClientEventSchema = v.variant("type", [
 		room: v.object({
 			users: v.array(
 				v.object({
-					id: v.string(),
 					name: v.string(),
 				}),
 			),

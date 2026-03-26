@@ -4,6 +4,7 @@ import { ClientCommand, ClientEvent } from "@ichibun/ws-api";
 import { DurableObject } from "cloudflare:workers";
 import { drizzle, DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
 import { migrate } from "drizzle-orm/durable-sqlite/migrator";
+import { HTTPException } from "hono/http-exception";
 
 import migrations from "../drizzle/migrations";
 import { IdGenerator } from "./application/service/id-generator";
@@ -31,8 +32,8 @@ export class GameDO extends DurableObject {
 		idGenerator: IdGenerator;
 		topicService: TopicService;
 	};
-	private roomCode: RoomCode;
 	private sessions: Map<WebSocket, { userId: string }>;
+	private roomCode?: RoomCode;
 
 	constructor(state: DurableObjectState, env: Cloudflare.Env) {
 		super(state, env);
@@ -54,8 +55,6 @@ export class GameDO extends DurableObject {
 			idGenerator: IdGenerator(),
 			topicService: TopicService(),
 		};
-		assert(this.ctx.id.name, "Durable Object ID is required");
-		this.roomCode = RoomCode(this.ctx.id.name);
 
 		this.migrate();
 
@@ -67,13 +66,13 @@ export class GameDO extends DurableObject {
 		const [client, server] = Object.values(webSocketPair);
 
 		const url = new URL(request.url);
-		const userId = url.searchParams.get("user-id");
-		assert(userId, "User ID is required");
+		const userId = url.searchParams.get("userId");
+		if (!userId) throw new HTTPException(400, { message: "Missing userId in query parameters" });
 
 		this.ctx.acceptWebSocket(server);
 
 		server.serializeAttachment({ userId });
-		this.sessions.set(client, { userId });
+		this.sessions.set(server, { userId });
 
 		return new Response(null, {
 			status: 101,
@@ -81,10 +80,15 @@ export class GameDO extends DurableObject {
 		});
 	}
 
+	setRoomCode(roomCode: RoomCode) {
+		this.roomCode = roomCode;
+	}
+
 	// eslint-disable-next-line eslint/max-lines-per-function
 	webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): void | Promise<void> {
 		const session = this.sessions.get(ws);
 		assert(session, "Session not found for WebSocket");
+		assert(this.roomCode, "Room code is not set");
 
 		if (typeof message !== "string") return;
 
@@ -97,12 +101,38 @@ export class GameDO extends DurableObject {
 					user: User(UserId(event.userId), UserName(event.userName)),
 				});
 				if (res.ok) {
-					this.sendToAll({
-						type: "UserUpdated",
-						users: res.data.users.map((u) => ({
-							name: u.name,
-						})),
+					let lastResult:
+						| Extract<ClientEvent, { type: "RoomJoined" }>["room"]["lastResult"]
+						| undefined = undefined;
+					if (res.data.result) {
+						lastResult = {
+							roundNumber: res.data.result.roundNumber,
+							topic: res.data.result.topic,
+							results: res.data.result.results.map((r) => ({
+								userName: r.user.name,
+								sentence: r.sentence.text,
+								voteCount: r.voteCount,
+							})),
+						};
+					}
+					this.sendToClient(ws, {
+						type: "RoomJoined",
+						room: {
+							users: res.data.users.map((u) => ({
+								name: u.name,
+							})),
+							lastResult,
+						},
 					});
+					this.sendToAll(
+						{
+							type: "UserUpdated",
+							users: res.data.users.map((u) => ({
+								name: u.name,
+							})),
+						},
+						ws,
+					);
 				} else {
 					this.sendToClient(ws, {
 						type: "Error",
@@ -157,12 +187,15 @@ export class GameDO extends DurableObject {
 				});
 				if (res.ok) {
 					if (res.data.phaseChanged) {
-						this.sendToAll({
-							type: "Voting",
-							sentences: res.data.sentences.map((s) => ({
-								userId: s.writerId,
-								sentence: s.text,
-							})),
+						const sentences = res.data.sentences.map((s) => ({
+							userId: s.writerId,
+							sentence: s.text,
+						}));
+						this.sessions.forEach(({ userId }, client) => {
+							this.sendToClient(client, {
+								type: "Voting",
+								sentences: sentences.filter((s) => s.userId !== userId),
+							});
 						});
 					}
 				} else {
@@ -222,12 +255,19 @@ export class GameDO extends DurableObject {
 
 		this.sessions.delete(ws);
 
+		assert(this.roomCode, "Room code is not set");
+
 		const uc = LeaveUseCase(this.deps);
 		const res = uc({
 			roomCode: this.roomCode,
 			userId: UserId(session.userId),
 		});
 		if (res.ok) {
+			if (res.data.users.length === 0) {
+				this.storage.deleteAll();
+				return;
+			}
+
 			this.sendToAll({
 				type: "UserUpdated",
 				users: res.data.users.map((u) => ({
@@ -248,10 +288,10 @@ export class GameDO extends DurableObject {
 		ws.send(message);
 	}
 
-	private sendToAll(event: ClientEvent) {
+	private sendToAll(event: ClientEvent, excludeWs?: WebSocket) {
 		const message = JSON.stringify(event);
 		this.sessions.forEach((_, client) => {
-			client.send(message);
+			if (client !== excludeWs) client.send(message);
 		});
 	}
 }

@@ -142,16 +142,18 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 					})
 					.where(eq(roundsTable.id, phase.roundId))
 					.run();
-				db.insert(wordsTable)
-					.values(
-						phase.submitted.map((w) => ({
-							writerId: w.writerId,
-							roundId: w.roundId,
-							word: w.word,
-						})),
-					)
-					.onConflictDoNothing()
-					.run();
+
+				if (phase.submitted.length > 0)
+					db.insert(wordsTable)
+						.values(
+							phase.submitted.map((w) => ({
+								writerId: w.writerId,
+								roundId: w.roundId,
+								word: w.word,
+							})),
+						)
+						.onConflictDoNothing()
+						.run();
 				break;
 			}
 			case "SentenceInputting": {
@@ -162,16 +164,17 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 					})
 					.where(eq(roundsTable.id, phase.roundId))
 					.run();
-				db.insert(sentencesTable)
-					.values(
-						phase.submitted.map((s) => ({
-							writerId: s.writerId,
-							roundId: s.roundId,
-							sentence: s.text,
-						})),
-					)
-					.onConflictDoNothing()
-					.run();
+				if (phase.submitted.length > 0)
+					db.insert(sentencesTable)
+						.values(
+							phase.submitted.map((s) => ({
+								writerId: s.writerId,
+								roundId: s.roundId,
+								sentence: s.text,
+							})),
+						)
+						.onConflictDoNothing()
+						.run();
 				break;
 			}
 			case "Voting": {
@@ -181,16 +184,17 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 					})
 					.where(eq(roundsTable.id, phase.roundId))
 					.run();
-				db.insert(votesTable)
-					.values(
-						phase.submitted.map((v) => ({
-							voterId: v.voterId,
-							roundId: v.roundId,
-							targetId: v.targetId,
-						})),
-					)
-					.onConflictDoNothing()
-					.run();
+				if (phase.submitted.length > 0)
+					db.insert(votesTable)
+						.values(
+							phase.submitted.map((v) => ({
+								voterId: v.voterId,
+								roundId: v.roundId,
+								targetId: v.targetId,
+							})),
+						)
+						.onConflictDoNothing()
+						.run();
 				break;
 			}
 		}
