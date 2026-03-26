@@ -1,0 +1,17 @@
+name: Deploy Worker
+on:
+  push:
+    branches:
+      - cloudflare
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & Deploy Backend Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          workingDirectory: apps/backend
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
