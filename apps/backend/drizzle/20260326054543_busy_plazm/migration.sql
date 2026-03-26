@@ -1,7 +1,11 @@
+CREATE TABLE `rooms` (
+	`code` text PRIMARY KEY,
+	`phase` text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE `rounds` (
 	`id` text PRIMARY KEY,
 	`roundNumber` integer NOT NULL,
-	`phase` text NOT NULL,
 	`topic` text NOT NULL,
 	`distributedWords` text
 );

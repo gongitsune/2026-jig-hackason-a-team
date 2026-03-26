@@ -82,6 +82,7 @@ export class GameDO extends DurableObject {
 
 	setRoomCode(roomCode: RoomCode) {
 		this.roomCode = roomCode;
+		this.deps.roomRepo.createRoom(roomCode);
 	}
 
 	// eslint-disable-next-line eslint/max-lines-per-function

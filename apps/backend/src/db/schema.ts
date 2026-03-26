@@ -2,6 +2,13 @@ import { int, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 import { RoundStatusList } from "../domain/models/entities/round";
 
+// Durable Objectを部屋ごとに分けているため、1レコードしか
+// 存在しないが、phaseを保存するためにroomsテーブルを用意
+export const roomsTable = sqliteTable("rooms", {
+	code: text().primaryKey(),
+	phase: text({ enum: RoundStatusList }).notNull(),
+});
+
 export const usersTable = sqliteTable("users", {
 	id: text().primaryKey(),
 	name: text().notNull(),
@@ -54,7 +61,6 @@ export const votesTable = sqliteTable(
 export const roundsTable = sqliteTable("rounds", {
 	id: text().primaryKey(),
 	roundNumber: int().notNull(),
-	phase: text({ enum: RoundStatusList }).notNull(),
 	topic: text().notNull(),
 	distributedWords: text(),
 });

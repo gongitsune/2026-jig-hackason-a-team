@@ -4,7 +4,7 @@ import { UseCaseResult, success, failure, UseCase } from ".";
 import { decide } from "../../domain/logics/room-decide";
 import { evolve } from "../../domain/logics/room-evolve";
 import { Room, RoomCode } from "../../domain/models/entities/room";
-import { Round, RoundId, RoundStatus } from "../../domain/models/entities/round";
+import { Round, RoundId } from "../../domain/models/entities/round";
 import { Sentence } from "../../domain/models/entities/sentence";
 import { User, UserId } from "../../domain/models/entities/user";
 import { Vote } from "../../domain/models/entities/vote";
@@ -112,7 +112,7 @@ export const StartGameUseCase: UseCase<StartGameDeps, RoomCode, StartGameOutput>
 		const topic = deps.topicService.pickRandom();
 		const roundId = RoundId(deps.idGenerator.generate());
 		const roundNumber = (room.phase.lastResult?.roundNumber ?? 0) + 1;
-		const round = Round(roundId, roundNumber, topic, RoundStatus("Waiting"));
+		const round = Round(roundId, roundNumber, topic);
 		deps.roomRepo.insertRound(round);
 
 		const res = runCommand(deps, room, { type: "StartGame", topic, roundId });

@@ -10,7 +10,6 @@ export const RoundSchema = v.pipe(
 		id: RoundIdSchema,
 		roundNumber: v.pipe(v.number(), v.minValue(1)),
 		topic: TopicSchema,
-		status: RoundStatusSchema,
 	}),
 	v.readonly(),
 	v.brand("Round"),
@@ -23,10 +22,5 @@ export type Round = v.InferOutput<typeof RoundSchema>;
 export const RoundId = (id: string) => v.parse(RoundIdSchema, id);
 export const RoundStatus = (status: (typeof RoundStatusList)[number]) =>
 	v.parse(RoundStatusSchema, status);
-export const Round = (id: RoundId, roundNumber: number, topic: Topic, status: RoundStatus) =>
-	v.parse(RoundSchema, { id, roundNumber, topic, status });
-
-export const updateRoundStatus = (round: Round, status: RoundStatus): Round => ({
-	...round,
-	status,
-});
+export const Round = (id: RoundId, roundNumber: number, topic: Topic) =>
+	v.parse(RoundSchema, { id, roundNumber, topic });

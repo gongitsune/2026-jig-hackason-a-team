@@ -1,11 +1,15 @@
 import { ClientCommand, ClientEvent } from "@ichibun/ws-api";
 import { env } from "cloudflare:workers";
+import { nanoid } from "nanoid";
 import { describe, expect, it } from "vitest";
 
 import app from "../src";
 
-const sendCommand = (ws: WebSocket, command: ClientCommand) => {
+const sendCommand = async (ws: WebSocket, command: ClientCommand, delay: number = 10) => {
 	ws.send(JSON.stringify(command));
+	await new Promise((resolve) => {
+		setTimeout(resolve, delay);
+	});
 };
 
 const waitExpectEvents = (
@@ -63,7 +67,7 @@ const makeWebSocket = async (roomCode: string, userId: string) => {
 };
 
 const joinUser = (ws: WebSocket, userId: string, userName: string) => {
-	sendCommand(ws, {
+	return sendCommand(ws, {
 		type: "JoinUser",
 		userId,
 		userName,
@@ -81,7 +85,7 @@ describe("ヘルスチェック", () => {
 
 describe("Integrate", () => {
 	it("ラウンドを一通り", async () => {
-		const roomCode = "TEST";
+		const roomCode = nanoid(6);
 		const userId1 = "566a534e-743f-434a-9fc0-c87135db7236";
 		const userId2 = "5b115ec4-540c-49b9-a018-1767b585843a";
 
@@ -112,6 +116,7 @@ describe("Integrate", () => {
 						],
 					},
 				},
+				{ type: "GameStarted", topic: expect.any(String) },
 			]),
 			waitExpectEvents(ws2, [
 				{
@@ -136,22 +141,25 @@ describe("Integrate", () => {
 						],
 					},
 				},
+				{ type: "GameStarted", topic: expect.any(String) },
 			]),
 		]);
 
-		joinUser(ws1, userId1, "User1");
-		joinUser(ws2, userId2, "User2");
+		await joinUser(ws1, userId1, "User1");
+		await joinUser(ws2, userId2, "User2");
 
-		sendCommand(ws1, { type: "StartGame" });
+		await sendCommand(ws1, { type: "StartGame" });
 
-		sendCommand(ws1, { type: "SubmitWord", word: "ふにゃふにゃ" });
-		sendCommand(ws2, { type: "SubmitWord", word: "びちゃびちゃ" });
+		await sendCommand(ws1, { type: "SubmitWord", word: "ふにゃふにゃ" });
+		await sendCommand(ws2, { type: "SubmitWord", word: "びちゃびちゃ" });
 
-		sendCommand(ws1, { type: "SubmitSentence", sentence: "ふにゃふにゃの猫" });
-		sendCommand(ws2, { type: "SubmitSentence", sentence: "びちゃびちゃの犬" });
+		await sendCommand(ws1, { type: "SubmitSentence", sentence: "ふにゃふにゃの猫" });
+		await sendCommand(ws2, { type: "SubmitSentence", sentence: "びちゃびちゃの犬" });
 
-		sendCommand(ws1, { type: "Vote", targetUserId: userId2 });
-		sendCommand(ws2, { type: "Vote", targetUserId: userId1 });
+		await sendCommand(ws1, { type: "Vote", targetUserId: userId2 });
+		await sendCommand(ws2, { type: "Vote", targetUserId: userId1 });
+
+		await sendCommand(ws1, { type: "StartGame" });
 
 		await eventPromise;
 	});

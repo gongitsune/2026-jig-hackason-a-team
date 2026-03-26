@@ -1,8 +1,8 @@
-import m0000 from './20260323043114_tough_masked_marvel/migration.sql';
+import m0000 from './20260326054543_busy_plazm/migration.sql';
 
   export default {
     migrations: {
-      "20260323043114_tough_masked_marvel": m0000
+      "20260326054543_busy_plazm": m0000
 }
   }
   

@@ -1,11 +1,18 @@
 import { and, count, eq, desc } from "drizzle-orm";
 import { DrizzleSqliteDODatabase } from "drizzle-orm/durable-sqlite";
 
-import { roundsTable, sentencesTable, usersTable, votesTable, wordsTable } from "../../db/schema";
+import {
+	roomsTable,
+	roundsTable,
+	sentencesTable,
+	usersTable,
+	votesTable,
+	wordsTable,
+} from "../../db/schema";
 import { topics } from "../../resources/topics";
 import { systemWords } from "../../resources/words";
 import { Room, RoomCode } from "../models/entities/room";
-import { Round, RoundId, RoundStatus } from "../models/entities/round";
+import { Round, RoundId } from "../models/entities/round";
 import { Sentence } from "../models/entities/sentence";
 import { User, UserId, UserName } from "../models/entities/user";
 import { Vote } from "../models/entities/vote";
@@ -23,6 +30,7 @@ import { Topic } from "../models/values/topic";
 export type RoomRepository = {
 	load: (code: RoomCode) => Room;
 	save: (room: Room) => void;
+	createRoom: (code: RoomCode) => void;
 	insertRound: (round: Round) => void;
 	findRoundById: (roundId: RoundId) => Round | undefined;
 };
@@ -39,17 +47,36 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 			.all()
 			.map((u) => User(UserId(u.id), UserName(u.name)));
 
+		const room = db.select().from(roomsTable).where(eq(roomsTable.code, code)).get();
+		if (!room) throw new Error("Room not found");
+
 		const latestRound = db
 			.select()
 			.from(roundsTable)
 			.orderBy(desc(roundsTable.roundNumber))
 			.limit(1)
 			.get();
-		return Room(code, users, loadPhase(latestRound));
+		return Room(code, users, loadPhase(latestRound, room?.phase));
 	};
 
 	const save = (room: Room) => {
+		db.update(roomsTable)
+			.set({
+				phase: room.phase.tag,
+			})
+			.where(eq(roomsTable.code, room.code))
+			.run();
 		savePhase(room.phase);
+	};
+
+	const createRoom = (code: RoomCode) => {
+		db.insert(roomsTable)
+			.values({
+				code,
+				phase: "Waiting",
+			})
+			.onConflictDoNothing()
+			.run();
 	};
 
 	const insertRound = (round: Round) => {
@@ -58,7 +85,6 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 				id: round.id,
 				roundNumber: round.roundNumber,
 				topic: round.topic,
-				phase: "Waiting",
 			})
 			.run();
 	};
@@ -66,12 +92,15 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 	const findRoundById = (roundId: RoundId): Round | undefined => {
 		const round = db.select().from(roundsTable).where(eq(roundsTable.id, roundId)).get();
 		if (!round) return undefined;
-		return Round(RoundId(roundId), round.roundNumber, Topic(round.topic), RoundStatus(round.phase));
+		return Round(RoundId(roundId), round.roundNumber, Topic(round.topic));
 	};
 
 	// oxlint-disable-next-line eslint/max-lines-per-function
-	const loadPhase = (latestRound: typeof roundsTable.$inferSelect | undefined): GamePhase => {
-		switch (latestRound?.phase ?? "Waiting") {
+	const loadPhase = (
+		latestRound: typeof roundsTable.$inferSelect | undefined,
+		phase: GamePhase["tag"],
+	): GamePhase => {
+		switch (phase ?? "Waiting") {
 			case "Waiting": {
 				if (!latestRound) return WaitingPhase();
 				return WaitingPhase(buildGameResult(db, latestRound));
@@ -138,7 +167,6 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 				db.update(roundsTable)
 					.set({
 						topic: phase.topic,
-						phase: "WordInputting",
 					})
 					.where(eq(roundsTable.id, phase.roundId))
 					.run();
@@ -159,7 +187,6 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 			case "SentenceInputting": {
 				db.update(roundsTable)
 					.set({
-						phase: "SentenceInputting",
 						distributedWords: JSON.stringify(phase.distributedWords),
 					})
 					.where(eq(roundsTable.id, phase.roundId))
@@ -178,12 +205,6 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 				break;
 			}
 			case "Voting": {
-				db.update(roundsTable)
-					.set({
-						phase: "Voting",
-					})
-					.where(eq(roundsTable.id, phase.roundId))
-					.run();
 				if (phase.submitted.length > 0)
 					db.insert(votesTable)
 						.values(
@@ -203,6 +224,7 @@ export const makeRoomRepository = (db: DrizzleSqliteDODatabase): RoomRepository 
 	return {
 		load,
 		save,
+		createRoom,
 		insertRound,
 		findRoundById,
 	};

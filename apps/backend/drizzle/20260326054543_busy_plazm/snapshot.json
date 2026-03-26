@@ -1,11 +1,15 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "312a7656-d49e-4377-b27a-6c7f75d23a02",
+  "id": "3618a9b6-950c-453e-8069-d3271b17f8cd",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
   "ddl": [
+    {
+      "name": "rooms",
+      "entityType": "tables"
+    },
     {
       "name": "rounds",
       "entityType": "tables"
@@ -32,6 +36,26 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
+      "name": "code",
+      "entityType": "columns",
+      "table": "rooms"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "phase",
+      "entityType": "columns",
+      "table": "rooms"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
       "name": "id",
       "entityType": "columns",
       "table": "rounds"
@@ -43,16 +67,6 @@
       "default": null,
       "generated": null,
       "name": "roundNumber",
-      "entityType": "columns",
-      "table": "rounds"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "phase",
       "entityType": "columns",
       "table": "rounds"
     },
@@ -320,6 +334,15 @@
       "name": "words_pk",
       "entityType": "pks",
       "table": "words"
+    },
+    {
+      "columns": [
+        "code"
+      ],
+      "nameExplicit": false,
+      "name": "rooms_pk",
+      "table": "rooms",
+      "entityType": "pks"
     },
     {
       "columns": [
